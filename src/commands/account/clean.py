@@ -1,4 +1,4 @@
-import commands
+from src import commands
 
 
 class Clean(commands.Command):

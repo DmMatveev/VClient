@@ -1,4 +1,4 @@
-import commands
+from src import commands
 
 
 class Get(commands.Command):
@@ -15,7 +15,7 @@ class Get(commands.Command):
                 raise commands.InvalidParameters
 
     def execute(self):
-        accounts = commands.account.List().get_accounts()
+        accounts = src.commands.account.List().get_accounts()
         for account in accounts:
             info = account.element_info.name
             if self._account_login in info and info.endswith('widget'):

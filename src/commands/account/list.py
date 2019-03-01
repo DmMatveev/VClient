@@ -1,8 +1,10 @@
 import commands
 
 
+#TODO ListBox0 пропал
+
 class List(commands.Command):
-    list = 'ListBox0'
+    list = 'ListBox1'
     status = ['badauth', 'validating', 'manual']
 
     def _check_status(self, info):

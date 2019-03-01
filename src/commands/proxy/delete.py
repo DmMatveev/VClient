@@ -1,6 +1,6 @@
 import pywinauto
 
-import commands
+from src import commands
 
 
 class Delete(commands.Command):
@@ -39,7 +39,7 @@ class Delete(commands.Command):
     #TODO Все таки надо листать список, если будет много
 
     def execute(self):
-        account = commands.account.Get(self._account_login).execute()
+        account = src.commands.account.Get(self._account_login).execute()
         account_position = account.rectangle
 
         while True:
@@ -57,10 +57,10 @@ class Delete(commands.Command):
             self.pane[self.BUTTON_ACCOUNT_DELETE].click()
 
             try:
-                account = commands.account.Get(self._account_login).execute()
+                account = src.commands.account.Get(self._account_login).execute()
                 account_position = account.rectangle
                 pywinauto.mouse.click(coords=self._get_coordinate_center(account_position))
-            except commands.account.AccountNotFound:
+            except src.commands.account.AccountNotFound:
                 return True
 
 
