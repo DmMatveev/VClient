@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from src.vclient import application
+from vclient.main import application
 
 
 class TestWindow(TestCase):

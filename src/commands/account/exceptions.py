@@ -1,3 +1,0 @@
-
-class AccountNotFound(Exception):
-    pass
