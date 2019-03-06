@@ -1,20 +1,19 @@
 import pywinauto
+from pywinauto import WindowSpecification
 
 import vclient.commands as commands
 
 
 class Command:
     app = pywinauto.Application(backend='uia')
-    pane = None
+    pane: WindowSpecification = None
 
     APP_DIR = 'C:\\Users\\Dmitry\\AppData\\Local\\VtopeBot'
 
     def __init__(self, *args):
         self._check_parameters(*args)
 
-        self.data = None
-
-        self.execute()
+        self._data = self.execute()
 
     def _check_parameters(self, *parameters):
         parameters = list(parameters)
@@ -25,6 +24,9 @@ class Command:
     def execute(self):
         raise NotImplementedError
 
+    def __getstate__(self):
+        return self._data
+
     @property
     def result(self):
-        return self.data
+        return self._data

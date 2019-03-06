@@ -7,6 +7,7 @@ def wait_before(time_sleep):
         return wrapper
     return decorator
 
+
 def wait_after(time_sleep):
     def decorator(method):
         def wrapper(*args, **kwargs):

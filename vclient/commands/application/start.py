@@ -1,21 +1,16 @@
 import os
-import time
+from enum import Enum, auto
 
 import pywinauto
 
-import vclient.commands as commands
+from vclient import commands
 
 
-class ApplicationStartError(Exception):
-    pass
+class Status(Enum):
+    ALREADY_START = auto()
+    START_ERROR = auto()
+    START_SUCCESS = auto()
 
-
-class ApplicationAlreadyStart(Exception):
-    pass
-
-
-class ApplicationStart(Exception):
-    pass
 
 
 class Start(commands.Command):
@@ -30,11 +25,13 @@ class Start(commands.Command):
         except pywinauto.application.ProcessNotFoundError:
             pass
         else:
-            raise ApplicationAlreadyStart
+            return Status.ALREADY_START.name
 
         try:
             app = self.app.start(path, work_dir=self.APP_DIR)
         except pywinauto.application.AppStartError:
-            raise ApplicationStartError
+            return Status.START_ERROR.name
 
         commands.Command.pane = app.Pane
+
+        return Status.START_SUCCESS.name

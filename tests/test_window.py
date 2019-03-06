@@ -33,7 +33,7 @@ class TestWindow(TestCase):
     def test5_reset_program(self):
         self.window.reset_program()
         self.window.start_process()
-        self.assertFalse(self.window.is_auth())
+        self.assertFalse(self.window.is_not_auth())
 
     def test6_check_minimize(self):
         pass

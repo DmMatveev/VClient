@@ -15,3 +15,5 @@ class Stop(commands.Command):
             parent.kill()
 
         commands.Command.pane = None
+
+        return 'STOP_SUCCESS'

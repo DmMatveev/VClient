@@ -1,16 +1,64 @@
+from enum import Enum, auto
+
+import pywinauto
+
 from vclient import commands
 
-'''
-Окна:
-Auth,
-Ready,
-ReadyNoInternet
-'''
+
+class StatusTypes(Enum):
+    NOT_AUTH = auto()
+    STOP = auto()
+    READY = auto()
+    WORK = auto()
+    ERROR = auto()
 
 
 class Status(commands.Command):
     def execute(self):
-        if commands.application.Auth.is_auth():
-            return True
+        if self.app.is_process_running():
+            if self.is_ready():
+                return StatusTypes.READY.name
 
+            if self.is_work():
+                return StatusTypes.WORK.name
 
+            if self.is_not_auth():
+                return StatusTypes.NOT_AUTH.name
+
+            return StatusTypes.ERROR.name
+        else:
+            return StatusTypes.STOP.name
+
+    @commands.utils.wait_before(1)
+    def is_ready(self):
+        try:
+            self.pane.child_window(title="Заработок не идет", control_type="Text").wrapper_object()
+        except pywinauto.findwindows.ElementNotFoundError:
+            return False
+        except pywinauto.findwindows.ElementAmbiguousError:
+            return False
+
+        return True
+
+    @commands.utils.wait_before(1)
+    def is_work(self):
+        return False
+        try:
+            self.pane.child_window(title="Регистрация", control_type="Button").wrapper_object()
+        except pywinauto.findwindows.ElementNotFoundError:
+            return False
+        except pywinauto.findwindows.ElementAmbiguousError:
+            return False
+
+        return True
+
+    @commands.utils.wait_before(1)
+    def is_not_auth(self):
+        try:
+            self.pane.child_window(title="Регистрация", control_type="Button").wrapper_object()
+        except pywinauto.findwindows.ElementNotFoundError:
+            return False
+        except pywinauto.findwindows.ElementAmbiguousError:
+            return False
+
+        return True

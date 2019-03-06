@@ -1,21 +1,16 @@
+from enum import Enum, auto
+
 import pywinauto
+
 from vclient import commands
 
 
-class AppAlreadyAuth(Exception):
-    pass
-
-
-class LoginOrPasswordIncorrect(Exception):
-    pass
-
-
-class ServerNotResponse(Exception):
-    pass
-
-
-class AuthError(Exception):
-    pass
+class Status(Enum):
+    SUCCESS = auto()
+    ERROR_LOGIN_OR_PASSWORD_INCORRECT = auto()
+    ERROR_SERVER_NOT_RESPONSE = auto()
+    ERROR_ALREADY_AUTH = auto()
+    ERROR = auto()
 
 
 class Auth(commands.Command):
@@ -40,7 +35,6 @@ class Auth(commands.Command):
     @classmethod
     def is_auth(cls):
         try:
-            #TODO взять данные из команды account.add
             cls.pane.child_window(title="Добавить аккаунт", control_type="Button").wait('exists', timeout=5)
         except pywinauto.application.TimeoutError:
             return False
@@ -49,7 +43,7 @@ class Auth(commands.Command):
 
     def execute(self):
         if self.is_auth():
-            raise AppAlreadyAuth
+            return Status.ERROR_ALREADY_AUTH.name
 
         self._write_data()
 
@@ -57,20 +51,20 @@ class Auth(commands.Command):
 
         for _ in range(6):
             if self.is_auth():
-                return
+                return Status.SUCCESS.name
 
         try:
             self.pane[self.TEXT_ERROR_AUTH].wait('exists', timeout=5)
         except pywinauto.application.TimeoutError:
             pass
         else:
-            raise LoginOrPasswordIncorrect
+            return Status.ERROR_LOGIN_OR_PASSWORD_INCORRECT.name
 
         try:
             self.pane[self.TEXT_ERROR_NO_INTERNET].wait('exists', timeout=5)
         except pywinauto.application.TimeoutError:
             pass
         else:
-            raise ServerNotResponse
+            return Status.ERROR_SERVER_NOT_RESPONSE.name
 
-        raise AuthError
+        raise Status.ERROR.name
