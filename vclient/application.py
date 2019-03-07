@@ -52,7 +52,11 @@ class Application:
         file = getattr(directory, command)
         command = getattr(file, command.capitalize())
 
-        return command().result
+        if command.RPC:
+            return command().result
+
+        return 'InvalidCommand'
+
 
     def deserialize(self, data: bytes) -> Any:
         return pickle.loads(data)

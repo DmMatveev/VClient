@@ -12,7 +12,6 @@ class Status(Enum):
     START_SUCCESS = auto()
 
 
-
 class Start(commands.Command):
     APP = 'vtopebot.exe'
 
@@ -25,7 +24,7 @@ class Start(commands.Command):
         except pywinauto.application.ProcessNotFoundError:
             pass
         else:
-            return Status.ALREADY_START.name
+            return Status.ALREADY_START
 
         try:
             app = self.app.start(path, work_dir=self.APP_DIR)

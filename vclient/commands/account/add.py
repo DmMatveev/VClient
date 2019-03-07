@@ -37,6 +37,7 @@ class Add(commands.Command):
 
         return True
 
+    #TODO так же сделать обнуление через клик по Item
     def execute(self):
         for _ in range(6):
             self.pane[self.BUTTON_OPEN_WINDOW_ACCOUNT].click()

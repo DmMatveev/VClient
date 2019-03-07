@@ -6,6 +6,8 @@ class AccountNotFound(Exception):
 
 
 class Get(commands.Command):
+    RPC = False
+
     def __init__(self, account_login):
         self._account_login = account_login
 

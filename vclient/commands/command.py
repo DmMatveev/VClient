@@ -5,6 +5,8 @@ import vclient.commands as commands
 
 
 class Command:
+    RPC = True
+
     app = pywinauto.Application(backend='uia')
     pane: WindowSpecification = None
 

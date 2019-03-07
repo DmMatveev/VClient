@@ -1,6 +1,8 @@
 import psutil
 from vclient import commands
 
+from vclient.status import StopStatus
+
 
 class Stop(commands.Command):
     PROCESSES = ['vtopementor.exe', 'vtopebot.exe', 'vtopeworker.exe', 'vtopeupdater.exe']
@@ -10,10 +12,13 @@ class Stop(commands.Command):
         return processes
 
     def execute(self):
-        for p in self._get_processes():
-            parent = psutil.Process(p.pid)
-            parent.kill()
+        try:
+            for p in self._get_processes():
+                parent = psutil.Process(p.pid)
+                parent.kill()
 
-        commands.Command.pane = None
+            commands.Command.pane = None
+        except Exception:
+            return StopStatus.ERROR
 
-        return 'STOP_SUCCESS'
+        return StopStatus.STOP

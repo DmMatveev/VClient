@@ -3,31 +3,24 @@ from enum import Enum, auto
 import pywinauto
 
 from vclient import commands
-
-
-class StatusTypes(Enum):
-    NOT_AUTH = auto()
-    STOP = auto()
-    READY = auto()
-    WORK = auto()
-    ERROR = auto()
+from vclient.status import WorkerStatus
 
 
 class Status(commands.Command):
     def execute(self):
         if self.app.is_process_running():
             if self.is_ready():
-                return StatusTypes.READY.name
+                return WorkerStatus.READY
 
             if self.is_work():
-                return StatusTypes.WORK.name
+                return WorkerStatus.WORK
 
             if self.is_not_auth():
-                return StatusTypes.NOT_AUTH.name
+                return WorkerStatus.NOT_AUTH
 
-            return StatusTypes.ERROR.name
+            return WorkerStatus.ERROR
         else:
-            return StatusTypes.STOP.name
+            return WorkerStatus.STOP
 
     @commands.utils.wait_before(1)
     def is_ready(self):
