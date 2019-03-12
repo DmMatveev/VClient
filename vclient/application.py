@@ -1,7 +1,4 @@
-import importlib
 import pickle
-from functools import partial
-from typing import Any
 
 import pika
 from pika import BasicProperties
@@ -9,25 +6,31 @@ from pika.adapters.blocking_connection import BlockingChannel, BlockingConnectio
 from pika.channel import Channel
 
 from vclient import commands
+from vclient import settings
 
 
 def get_name_queue():
     import urllib.request
     ip = urllib.request.urlopen('http://ident.me').read().decode('utf8')
-    return '6'
     return ip
 
 
 class Application:
     def __init__(self):
-        self.connection: BlockingConnection = BlockingConnection(pika.ConnectionParameters('localhost', 5672))
-        self.channel: BlockingChannel = self.connection.channel()
+        self.connectionParameters = pika.ConnectionParameters(settings.SERVER_IP, 5672)
 
-        queue_name = get_name_queue()
+        self.connection: BlockingConnection = None
+        self.channel: BlockingChannel = None
 
-        self.channel.queue_declare(queue_name, auto_delete=True)
+        self.queue_name = get_name_queue()
 
-        self.channel.basic_consume(self.handler_commands, queue_name)
+    def connect(self):
+        self.connection = BlockingConnection(pika.ConnectionParameters(settings.SERVER_IP, 5672))
+        self.channel = self.connection.channel()
+
+        self.channel.queue_declare(self.queue_name, auto_delete=True)
+
+        self.channel.basic_consume(self.handler_commands, self.queue_name)
 
         self.channel.start_consuming()
 
@@ -41,7 +44,7 @@ class Application:
 
         result = self.call_command(command)
 
-        channel.basic_publish('', 'worker', pickle.dumps(result), properties=properties)
+        channel.basic_publish('', 'worker', self.serialize(result), properties=properties)
 
     def call_command(self, command: str):
         command = command.lower()
@@ -55,11 +58,10 @@ class Application:
         if command.RPC:
             return command().result
 
-        return 'InvalidCommand'
+        return 'INVALID_COMMAND'
 
-
-    def deserialize(self, data: bytes) -> Any:
+    def deserialize(self, data):
         return pickle.loads(data)
 
-    def serialize(self, data: Any) -> bytes:
+    def serialize(self, data):
         return pickle.dumps(data)
