@@ -1,6 +1,6 @@
 import pywinauto
 
-from vclient import commands
+import commands
 
 
 class AccountNotAdd(Exception):

@@ -1,22 +1,28 @@
-import os
-import sys
+import logging
 import time
 
-from output import output
+from application import Application
+from pika.exceptions import ConnectionClosed, IncompatibleProtocolError
 
-from vclient.application import Application
+#logging.basicConfig(level=logging.DEBUG)
 
 
 def init():
+    print('Start')
     application = Application()
-
     while True:
         try:
-            output.flush('Connect')
             application.connect()
+        except ConnectionClosed:
+            print('Connect Failed')
+            time.sleep(5)
+
+        except IncompatibleProtocolError:
+            print('Connect Failed')
+            time.sleep(5)
+
         except Exception as e:
-            output.flush('Connect Failed. Pause 60 sec')
-            time.sleep(60)
+            print(e)
 
 
 if __name__ == '__main__':

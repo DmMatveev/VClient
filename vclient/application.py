@@ -1,12 +1,15 @@
+import logging
 import pickle
 
 import pika
+import settings
 from pika import BasicProperties
 from pika.adapters.blocking_connection import BlockingChannel, BlockingConnection
 from pika.channel import Channel
 
-from vclient import commands
-from vclient import settings
+# from vclient import commands
+
+logger = logging.getLogger(__name__)
 
 
 def get_name_queue():
@@ -25,12 +28,17 @@ class Application:
         self.queue_name = get_name_queue()
 
     def connect(self):
-        self.connection = BlockingConnection(pika.ConnectionParameters(settings.SERVER_IP, 5672))
+        self.connection = BlockingConnection(pika.ConnectionParameters(settings.SERVER_IP, settings.SERVER_PORT))
+
+        print('Connected')
+
         self.channel = self.connection.channel()
 
         self.channel.queue_declare(self.queue_name, auto_delete=True)
 
         self.channel.basic_consume(self.handler_commands, self.queue_name)
+
+        print('Listen')
 
         self.channel.start_consuming()
 
@@ -42,7 +50,11 @@ class Application:
 
         command = self.deserialize(body)
 
+        print(command)
+
         result = self.call_command(command)
+
+        print(result)
 
         channel.basic_publish('', 'worker', self.serialize(result), properties=properties)
 
@@ -51,7 +63,7 @@ class Application:
 
         command_type, command = command.split('.')
 
-        directory = getattr(commands, command_type)
+        directory = getattr(command, command_type)
         file = getattr(directory, command)
         command = getattr(file, command.capitalize())
 

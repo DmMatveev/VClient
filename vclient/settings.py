@@ -1,1 +1,3 @@
-SERVER_IP = 'localhost'
+#SERVER_IP = 'localhost'
+SERVER_IP = '212.109.195.39'
+SERVER_PORT = 5672
