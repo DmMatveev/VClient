@@ -21,4 +21,6 @@ class Stop(commands.Command):
         except Exception:
             return StopStatus.ERROR
 
+        commands.Command.pane = None
+
         return StopStatus.STOP

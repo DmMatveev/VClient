@@ -1,4 +1,8 @@
+import os
+import sys
 import time
+
+from output import output
 
 from vclient.application import Application
 
@@ -8,11 +12,10 @@ def init():
 
     while True:
         try:
-            print('Try connect to server')
+            output.flush('Connect')
             application.connect()
         except Exception as e:
-            print(e)
-            print('Server not response. Pause 60 second')
+            output.flush('Connect Failed. Pause 60 sec')
             time.sleep(60)
 
 
