@@ -2,7 +2,7 @@ from enum import Enum, auto
 
 import pywinauto
 
-from vclient import commands
+import commands
 
 
 class Status(Enum):
@@ -22,11 +22,11 @@ class Auth(commands.Command):
 
     BUTTON_AUTH = 'Button3'
 
-    def __init__(self, app_login, app_password):
-        self._app_login = app_login
-        self._app_password = app_password
+    def __init__(self, login, password):
+        self._app_login = login
+        self._app_password = password
 
-        super().__init__(app_login, app_password)
+        super().__init__(login, password)
 
     def _write_data(self):
         self.pane[self.INPUT_LOGIN].set_text(self._app_login)
@@ -35,8 +35,8 @@ class Auth(commands.Command):
     @classmethod
     def is_auth(cls):
         try:
-            cls.pane.child_window(title="Добавить аккаунт", control_type="Button").wait('exists', timeout=5)
-        except pywinauto.application.TimeoutError:
+            cls.pane.child_window(title="Добавить аккаунт", control_type="Button").wrapper_object()
+        except pywinauto.findwindows.ElementNotFoundError:
             return False
 
         return True

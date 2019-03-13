@@ -3,7 +3,7 @@ from enum import Enum, auto
 
 import pywinauto
 
-from vclient import commands
+import commands
 
 
 class Status(Enum):

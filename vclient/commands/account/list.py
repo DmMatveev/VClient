@@ -1,4 +1,4 @@
-from vclient import commands
+import commands
 
 
 class List(commands.Command):

@@ -1,7 +1,7 @@
 import psutil
-from vclient import commands
+import commands
 
-from vclient.status import StopStatus
+from status import StopStatus
 
 
 class Stop(commands.Command):

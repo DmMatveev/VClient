@@ -1,7 +1,7 @@
 import pywinauto
 from pywinauto import WindowSpecification
 
-import vclient.commands as commands
+import commands
 
 
 class Command:

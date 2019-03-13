@@ -1,8 +1,8 @@
 import os
 
-from vclient import commands
+import commands
 
-from vclient.status import ResetStatus
+from status import ResetStatus
 
 
 class Reset(commands.Command):

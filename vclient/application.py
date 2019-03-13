@@ -1,5 +1,6 @@
 import logging
 import pickle
+from typing import Any, Dict
 
 import pika
 import settings
@@ -7,7 +8,7 @@ from pika import BasicProperties
 from pika.adapters.blocking_connection import BlockingChannel, BlockingConnection
 from pika.channel import Channel
 
-# from vclient import commands
+import commands
 
 logger = logging.getLogger(__name__)
 
@@ -45,30 +46,33 @@ class Application:
     def handler_commands(self, channel: Channel, method, properties: BasicProperties, body):
         properties = BasicProperties(
             correlation_id=properties.correlation_id,
-            type='result'
+            type='result',
+            app_id=self.queue_name
         )
 
-        command = self.deserialize(body)
+        message = self.deserialize(body)
 
-        print(command)
+        print(message)
 
-        result = self.call_command(command)
+        result = self.call_command(**message)
 
         print(result)
 
         channel.basic_publish('', 'worker', self.serialize(result), properties=properties)
 
-    def call_command(self, command: str):
+    def call_command(self, command: str, arguments: Dict = None):
+        arguments = arguments or {}
+
         command = command.lower()
 
         command_type, command = command.split('.')
 
-        directory = getattr(command, command_type)
+        directory = getattr(commands, command_type)
         file = getattr(directory, command)
         command = getattr(file, command.capitalize())
 
         if command.RPC:
-            return command().result
+            return command(**arguments).result
 
         return 'INVALID_COMMAND'
 

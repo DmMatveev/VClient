@@ -2,8 +2,8 @@ from enum import Enum, auto
 
 import pywinauto
 
-from vclient import commands
-from vclient.status import WorkerStatus
+import commands
+from status import WorkerStatus
 
 
 class Status(commands.Command):

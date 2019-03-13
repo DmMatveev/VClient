@@ -1,9 +1,9 @@
 import pywinauto
 
-from vclient import commands
+import commands
 import pywinauto
 
-from vclient import commands
+
 
 
 class AccountNotDelete(Exception):
