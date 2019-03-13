@@ -8,9 +8,11 @@ from pika import BasicProperties
 from pika.adapters.blocking_connection import BlockingChannel, BlockingConnection
 from pika.channel import Channel
 
+from status import CommandMessage, ResultMessage
+
 import commands
 
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 def get_name_queue():
@@ -31,7 +33,7 @@ class Application:
     def connect(self):
         self.connection = BlockingConnection(pika.ConnectionParameters(settings.SERVER_IP, settings.SERVER_PORT))
 
-        print('Connected')
+        log.debug('RabbitMQ connect')
 
         self.channel = self.connection.channel()
 
@@ -39,29 +41,38 @@ class Application:
 
         self.channel.basic_consume(self.handler_commands, self.queue_name)
 
-        print('Listen')
+        log.debug('RabbitMQ listen')
 
         self.channel.start_consuming()
 
     def handler_commands(self, channel: Channel, method, properties: BasicProperties, body):
+        log.debug('Message received')
+
         properties = BasicProperties(
             correlation_id=properties.correlation_id,
             type='result',
             app_id=self.queue_name
         )
 
-        message = self.deserialize(body)
+        message: CommandMessage = self.deserialize(body)
 
-        print(message)
+        if message is not CommandMessage:
+            log.error('Invalid CommandMessage: %s', message)
+            return
 
-        result = self.call_command(**message)
+        log.debug('Command: %s', message.command)
+        log.debug('Parameters: %s', message.parameters)
 
-        print(result)
+        result = self.call_command(message.command, message.parameters)
+
+        log.debug('Result command: %s', result)
 
         channel.basic_publish('', 'worker', self.serialize(result), properties=properties)
 
-    def call_command(self, command: str, arguments: Dict = None):
-        arguments = arguments or {}
+        log.debug('Send result')
+
+    def call_command(self, command: str, parameters: Dict[str, str] = None):
+        parameters = parameters or {}
 
         command = command.lower()
 

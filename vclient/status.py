@@ -1,4 +1,15 @@
 from enum import Enum, auto
+from typing import Dict, Any, NamedTuple
+
+
+class CommandMessage(NamedTuple):
+    command: str
+    parameters: Dict[str, str] = None
+
+
+class ResultMessage(NamedTuple):
+    status: Any
+    data: Dict[str, str] = None
 
 
 class WorkerStatus(Enum):
