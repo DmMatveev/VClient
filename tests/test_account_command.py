@@ -8,22 +8,8 @@ class TestAccountCommand(TestCase):
     def setUpClass(cls):
         commands.application.Stop()
         commands.application.Start()
-        commands.account.Clean()
 
-    def test1_check_invalid_parameters(self):
-        with self.assertRaises(commands.InvalidParameters):
-            commands.account.Add('', '0@a.ru', 'password')
-            commands.account.Add('vk', '', 'password')
-            commands.account.Add('vk', '0@a.ru', '')
-
-            commands.account.Get('')
-
-            commands.account.Delete('')
-
-        with self.assertRaises(commands.account.AccountNotFound):
-            commands.account.Delete('0@a.ru')
-
-    def test2_add_account_without_proxy(self):
+    def test1_add_account_without_proxy(self):
         commands.account.Add('vk', '1@a.ru', 'password')
         commands.account.Add('vk', '2@a.ru', 'password')
 
