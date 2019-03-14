@@ -1,15 +1,8 @@
 import os
-from enum import Enum, auto
-
-import pywinauto
 
 import commands
-
-
-class Status(Enum):
-    ALREADY_START = auto()
-    START_ERROR = auto()
-    START_SUCCESS = auto()
+import pywinauto
+from common import StartStatus
 
 
 class Start(commands.Command):
@@ -24,13 +17,13 @@ class Start(commands.Command):
         except pywinauto.application.ProcessNotFoundError:
             pass
         else:
-            return Status.ALREADY_START
+            return StartStatus.ERROR_ALREADY_START, None
 
         try:
             app = self.app.start(path, work_dir=self.APP_DIR)
         except pywinauto.application.AppStartError:
-            return Status.START_ERROR.name
+            return StartStatus.START_ERROR, None
 
         commands.Command.pane = app.Pane
 
-        return Status.START_SUCCESS.name
+        return StartStatus.START, None

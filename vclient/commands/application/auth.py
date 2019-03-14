@@ -1,16 +1,6 @@
-from enum import Enum, auto
-
-import pywinauto
-
 import commands
-
-
-class Status(Enum):
-    SUCCESS = auto()
-    ERROR_LOGIN_OR_PASSWORD_INCORRECT = auto()
-    ERROR_SERVER_NOT_RESPONSE = auto()
-    ERROR_ALREADY_AUTH = auto()
-    ERROR = auto()
+import pywinauto
+from common import AuthStatus
 
 
 class Auth(commands.Command):
@@ -43,7 +33,7 @@ class Auth(commands.Command):
 
     def execute(self):
         if self.is_auth():
-            return Status.ERROR_ALREADY_AUTH.name
+            return AuthStatus.ERROR_ALREADY_AUTH, None
 
         self._write_data()
 
@@ -51,20 +41,20 @@ class Auth(commands.Command):
 
         for _ in range(6):
             if self.is_auth():
-                return Status.SUCCESS.name
+                return AuthStatus.AUTH, None
 
         try:
             self.pane[self.TEXT_ERROR_AUTH].wait('exists', timeout=5)
         except pywinauto.application.TimeoutError:
             pass
         else:
-            return Status.ERROR_LOGIN_OR_PASSWORD_INCORRECT.name
+            return AuthStatus.ERROR_LOGIN_OR_PASSWORD_INCORRECT, None
 
         try:
             self.pane[self.TEXT_ERROR_NO_INTERNET].wait('exists', timeout=5)
         except pywinauto.application.TimeoutError:
             pass
         else:
-            return Status.ERROR_SERVER_NOT_RESPONSE.name
+            return AuthStatus.ERROR_SERVER_NOT_RESPONSE, None
 
-        raise Status.ERROR.name
+        return AuthStatus.ERROR, None

@@ -1,39 +1,17 @@
 import logging.config
 import time
 
-from application import Application
-from pika.exceptions import ConnectionClosed, IncompatibleProtocolError
+try:
+    import settings
+    from application import Application
+    from pika.exceptions import ConnectionClosed, IncompatibleProtocolError
 
-logging.config.dictConfig({
-    'version': 1,
-    'disable_existing_loggers': False,
+    log = logging.getLogger(__name__)
 
-    'formatters': {
-        'standard': {
-            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
-        },
-    },
-
-    'handlers': {
-        'default': {
-            'level': 'DEBUG',
-            'formatter': 'standard',
-            'class': 'logging.StreamHandler',
-        }
-    },
-    'loggers': {
-        '': {
-            'handlers': ['default'],
-            'level': 'DEBUG',
-        },
-
-        'pika': {
-            'level': 'ERROR',
-        }
-    }
-})
-
-log = logging.getLogger(__name__)
+    logging.config.dictConfig(settings.log_config)
+except Exception as e:
+    print(e)
+    input()
 
 
 def init():

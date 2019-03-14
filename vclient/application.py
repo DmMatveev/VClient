@@ -1,16 +1,15 @@
 import logging
 import pickle
-from typing import Any, Dict
+from typing import Dict
 
+import commands
 import pika
 import settings
+from commands import Command
 from pika import BasicProperties
 from pika.adapters.blocking_connection import BlockingChannel, BlockingConnection
 from pika.channel import Channel
-
-from status import CommandMessage, ResultMessage
-
-import commands
+from common import CommandMessage, ResultMessage
 
 log = logging.getLogger(__name__)
 
@@ -56,14 +55,14 @@ class Application:
 
         message: CommandMessage = self.deserialize(body)
 
-        if message is not CommandMessage:
+        if not isinstance(message, CommandMessage):
             log.error('Invalid CommandMessage: %s', message)
             return
 
         log.debug('Command: %s', message.command)
         log.debug('Parameters: %s', message.parameters)
 
-        result = self.call_command(message.command, message.parameters)
+        result: ResultMessage = self.call_command(message.command, message.parameters)
 
         log.debug('Result command: %s', result)
 
@@ -71,7 +70,7 @@ class Application:
 
         log.debug('Send result')
 
-    def call_command(self, command: str, parameters: Dict[str, str] = None):
+    def call_command(self, command: str, parameters: Dict[str, str] = None) -> ResultMessage:
         parameters = parameters or {}
 
         command = command.lower()
@@ -83,9 +82,9 @@ class Application:
         command = getattr(file, command.capitalize())
 
         if command.RPC:
-            return command(**arguments).result
+            return command(**parameters).message
 
-        return 'INVALID_COMMAND'
+        return ResultMessage('INVALID_COMMAND')
 
     def deserialize(self, data):
         return pickle.loads(data)

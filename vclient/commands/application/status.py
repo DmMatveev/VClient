@@ -3,24 +3,24 @@ from enum import Enum, auto
 import pywinauto
 
 import commands
-from status import WorkerStatus
+from common import WorkerStatus
 
 
 class Status(commands.Command):
     def execute(self):
         if self.app.is_process_running():
             if self.is_ready():
-                return WorkerStatus.READY
+                return WorkerStatus.READY, None
 
             if self.is_work():
-                return WorkerStatus.WORK
+                return WorkerStatus.WORK, None
 
             if self.is_not_auth():
-                return WorkerStatus.NOT_AUTH
+                return WorkerStatus.NOT_AUTH, None
 
             return WorkerStatus.ERROR
         else:
-            return WorkerStatus.STOP
+            return WorkerStatus.STOP, None
 
     @commands.utils.wait_before(1)
     def is_ready(self):

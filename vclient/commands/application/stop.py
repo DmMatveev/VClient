@@ -1,7 +1,7 @@
 import psutil
 import commands
 
-from status import StopStatus
+from common import StopStatus
 
 
 class Stop(commands.Command):
@@ -23,4 +23,4 @@ class Stop(commands.Command):
 
         commands.Command.pane = None
 
-        return StopStatus.STOP
+        return StopStatus.STOP, None
