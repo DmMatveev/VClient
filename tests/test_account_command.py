@@ -1,5 +1,6 @@
 from unittest import TestCase
 
+from common import AccountAddParameters
 from vclient import commands
 
 
@@ -10,7 +11,9 @@ class TestAccountCommand(TestCase):
         commands.application.Start()
 
     def test1_add_account_without_proxy(self):
-        commands.account.Add('vk', '1@a.ru', 'password')
+        parameters = AccountAddParameters('1@a.ru', 'password')
+        commands.account.Add(parameters)
+
         commands.account.Add('vk', '2@a.ru', 'password')
 
         self.assertEqual(len(commands.account.List().result), 2)

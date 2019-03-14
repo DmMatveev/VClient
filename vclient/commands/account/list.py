@@ -11,7 +11,7 @@ class List(commands.Command):
 
         raise Exception()
 
-    def _clean_login(self, login):
+    def clean_login(self, login):
         # Хак, появляются рандомные числа в наименование
         # Закономерность, что эти числа заканичвается одинаково и они одинакового размера
         if '_' in login:
@@ -43,7 +43,7 @@ class List(commands.Command):
 
             status = self._check_status(info)
             login = info.replace(status, '')
-            login = self._clean_login(login)
+            login = self.clean_login(login)
             items.append({
                 'login': login,
                 'status': status

@@ -1,8 +1,7 @@
 from unittest import TestCase
 
+from common import StopStatus, StartStatus, WorkerStatus, AuthStatus, ApplicationAuthParameters
 from vclient import commands
-
-from common import StopStatus, StartStatus, WorkerStatus, AuthStatus
 
 
 class TestApplicationCommand(TestCase):
@@ -31,15 +30,18 @@ class TestApplicationCommand(TestCase):
         self.assertEqual(result.data, None)
 
     def test4_check_auth(self):
-        result = commands.application.Auth('login', 'password')
+        parameters = ApplicationAuthParameters('login', 'password')
+        result = commands.application.Auth(parameters)
         self.assertEqual(result.status, AuthStatus.ERROR_LOGIN_OR_PASSWORD_INCORRECT)
         self.assertEqual(result.data, None)
 
-        result = commands.application.Auth('dm.matveev1996@yandex.ru', 'dm.matveev1996@yandex.ru')
+        parameters = ApplicationAuthParameters('dm.matveev1996@yandex.ru', 'dm.matveev1996@yandex.ru')
+        result = commands.application.Auth(parameters)
         self.assertEqual(result.status, AuthStatus.AUTH)
         self.assertEqual(result.data, None)
 
-        result = commands.application.Auth('login', 'password')
+        parameters = ApplicationAuthParameters('login', 'password')
+        result = commands.application.Auth(parameters)
         self.assertEqual(result.status, AuthStatus.ERROR_ALREADY_AUTH)
         self.assertEqual(result.data, None)
 

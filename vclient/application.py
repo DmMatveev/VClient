@@ -1,6 +1,6 @@
 import logging
 import pickle
-from typing import Dict
+from typing import Dict, NamedTuple
 
 import commands
 import pika
@@ -73,9 +73,7 @@ class Application:
 
         log.debug('Send result')
 
-    def call_command(self, command: str, parameters: Dict[str, str] = None) -> ResultMessage:
-        parameters = parameters or {}
-
+    def call_command(self, command: str, parameters: NamedTuple = None) -> ResultMessage:
         command = command.lower()
 
         command_type, command = command.split('.')
@@ -85,7 +83,12 @@ class Application:
         command = getattr(file, command.capitalize())
 
         if command.RPC:
-            return command(**parameters).message
+            if parameters:
+                result = command(parameters).message
+            else:
+                result = command().message
+
+            return result
 
         return ResultMessage('INVALID_COMMAND')
 

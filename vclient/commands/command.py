@@ -15,7 +15,7 @@ class Command:
 
     APP_DIR = f'{os.path.split(os.getenv("APPDATA"))[0]}\\Local\\VtopeBot'
 
-    def __init__(self, *args):
+    def __init__(self):
         self._status, self._data = self.execute()
 
     def execute(self):  # написать вовзврат двух аргументов

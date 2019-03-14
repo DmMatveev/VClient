@@ -1,7 +1,7 @@
 import pywinauto
 
 import commands
-from common import AccountAddParameters
+from common import AccountAddParameters, AccountAddStatus
 
 
 class Add(commands.Command):
@@ -17,28 +17,30 @@ class Add(commands.Command):
         self.parameters = parameters
         super().__init__()
 
-    def _write_data(self):
+    @commands.wait_before(3)
+    def is_account_add(self):
+        try:
+            commands.account.Get(self.parameters.login)
+        except commands.account.AccountNotFound:
+            return False
+
+        return True
+
+    def write_data(self):
         self.pane[self.INPUT_ACCOUNT_LOGIN].set_text(self.parameters.login)
         self.pane[self.INPUT_ACCOUNT_PASSWORD].set_text(self.parameters.password)
 
-    #TODO так же сделать обнуление через клик по Item
     def execute(self):
-        for _ in range(6):
-            self.pane[self.BUTTON_OPEN_WINDOW_ACCOUNT].click()
+        self.pane[self.BUTTON_OPEN_WINDOW_ACCOUNT].click()
 
-            try:
-                self._write_data()
-            except pywinauto.findwindows.ElementNotFoundError:
-                continue
+        try:
+            self.write_data()
+        except pywinauto.findwindows.ElementNotFoundError:
+            return AccountAddStatus.ERROR, None
 
-        for _ in range(6):
-            self.pane[self.BUTTON_ACCOUNT_ADD].click()
+        self.pane[self.BUTTON_ACCOUNT_ADD].click()
 
-            try:
-                self.pane[self.INPUT_ACCOUNT_LOGIN].wrapper_object()
-                self.pane[self.INPUT_ACCOUNT_PASSWORD].wrapper_object()
-            except pywinauto.findwindows.ElementNotFoundError:
-                return
+        if self.is_account_add():
+            return AccountAddStatus.ADD, None
 
-
-
+        return AccountAddStatus.ERROR, None

@@ -1,6 +1,6 @@
 import commands
 import pywinauto
-from common import AuthStatus
+from common import AuthStatus, ApplicationAuthParameters
 
 
 class Auth(commands.Command):
@@ -12,15 +12,13 @@ class Auth(commands.Command):
 
     BUTTON_AUTH = 'Button3'
 
-    def __init__(self, login, password):
-        self._app_login = login
-        self._app_password = password
+    def __init__(self, parameters: ApplicationAuthParameters):
+        self.parameters = parameters
+        super().__init__()
 
-        super().__init__(login, password)
-
-    def _write_data(self):
-        self.pane[self.INPUT_LOGIN].set_text(self._app_login)
-        self.pane[self.INPUT_PASSWORD].set_text(self._app_password)
+    def write_data(self):
+        self.pane[self.INPUT_LOGIN].set_text(self.parameters.login)
+        self.pane[self.INPUT_PASSWORD].set_text(self.parameters.password)
 
     @classmethod
     def is_auth(cls):
@@ -35,7 +33,7 @@ class Auth(commands.Command):
         if self.is_auth():
             return AuthStatus.ERROR_ALREADY_AUTH, None
 
-        self._write_data()
+        self.write_data()
 
         self.pane[self.BUTTON_AUTH].click()
 
