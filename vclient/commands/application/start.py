@@ -12,12 +12,16 @@ class Start(commands.Command):
     def execute(self):
         path = os.path.join(self.APP_DIR, self.APP)
 
+        if self.app.is_process_running():
+            return StartStatus.ERROR_ALREADY_START, None
+
         try:
-            self.app.connect(path=path)
+            app = self.app.connect(path=path)
         except pywinauto.application.ProcessNotFoundError:
             pass
         else:
-            return StartStatus.ERROR_ALREADY_START, None
+            commands.Command.pane = app.Pane
+            return StartStatus.START, None
 
         try:
             app = self.app.start(path, work_dir=self.APP_DIR)
@@ -25,5 +29,4 @@ class Start(commands.Command):
             return StartStatus.START_ERROR, None
 
         commands.Command.pane = app.Pane
-
         return StartStatus.START, None

@@ -11,9 +11,11 @@ class List(commands.Command):
 
         raise Exception()
 
-    def clean_login(self, login):
-        # Хак, появляются рандомные числа в наименование
-        # Закономерность, что эти числа заканичвается одинаково и они одинакового размера
+    def clean_login(self, login: str) -> str:
+        """
+        Хак, появляются рандомные числа в наименование
+        Закономерность, что эти числа заканичвается одинаково и они одинакового размера
+        """
         if '_' in login:
             number_size = login.rindex('_') - login.index('_') - 1
             login = login[number_size * 2 + 2:]
@@ -23,15 +25,16 @@ class List(commands.Command):
     @classmethod
     @commands.utils.wait_before(1)
     def get_accounts(cls):
-        items = cls.pane.child_window(control_type='List', ctrl_index=0).children()
-        result = []
+        result = set()
 
-        for item in items:
-            info = item.element_info.name
-            if info.endswith('widget'):
-                result.append(item)
+        while True:
+            items = cls.pane.child_window(control_type='List', ctrl_index=0).children()
 
-        return result
+            items = [item.element_info.name for item in items if item.element_info.name.endswith('widget')]
+            result.union(items)
+
+
+
 
     def execute(self):
         items = []
