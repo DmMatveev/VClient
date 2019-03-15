@@ -7,21 +7,21 @@ from vclient import commands
 class TestAccountCommand(TestCase):
     @classmethod
     def setUpClass(cls):
-        commands.application.Stop()
         commands.application.Start()
 
     def test1_add_account_without_proxy(self):
         parameters = AccountAddParameters('1@a.ru', 'password')
         commands.account.Add(parameters)
 
-        commands.account.Add('vk', '2@a.ru', 'password')
+        parameters = AccountAddParameters('2@a.ru', 'password')
+        commands.account.Add(parameters)
 
-        self.assertEqual(len(commands.account.List().result), 2)
+        parameters = AccountAddParameters('1@a.ru', 'password')
+        commands.account.Add(parameters)
 
-        commands.account.Add('vk', '3@a.ru', 'password')
-        commands.account.Add('vk', '4@a.ru', 'password')
+        parameters = AccountAddParameters('1@a.ru', 'password')
+        commands.account.Add(parameters)
 
-        self.assertEqual(len(commands.account.List().result), 4)
 
     def test3_add_account_with_proxy(self):
         commands.account.Add('vk', '1@a.ru', 'password')

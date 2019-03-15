@@ -1,8 +1,11 @@
+from enum import Enum, auto
+
 import commands
 
 
-class AccountNotFound(Exception):
-    pass
+class AccountGetStatus(Enum):
+    FOUND = auto()
+    NOT_FOUND = auto()
 
 
 class Get(commands.Command):
@@ -14,10 +17,9 @@ class Get(commands.Command):
         super().__init__()
 
     def execute(self):
-        accounts = commands.account.List().get_accounts()
-        for account in accounts:
-            info = account.element_info.name
-            if self.login in info:
-                return account.element_info
+        accounts_info = commands.account.List.get_all_accounts_info()
+        for account_info in accounts_info:
+            if self.login in account_info:
+                return AccountGetStatus.FOUND
 
-        raise AccountNotFound
+        return AccountGetStatus.NOT_FOUND
