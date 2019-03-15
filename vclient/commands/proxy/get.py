@@ -1,24 +1,25 @@
-from vclient import commands
+from enum import Enum, auto
+
+import commands
+
+
+class ProxyGetStatus(Enum):
+    FOUND = auto()
+    NOT_FOUND = auto()
 
 
 class Get(commands.Command):
-    def __init__(self, account_login):
-        self._check_parameters(account_login)
+    RPC = False
+
+    def __init__(self, ip):
+        self.ip = ip
 
         super().__init__()
-        self._account_login = account_login
-
-    @staticmethod
-    def _check_parameters(*parameters):
-        for parameter in parameters:
-            if not isinstance(parameter, str) and parameter == '':
-                raise commands.InvalidParameters
 
     def execute(self):
-        accounts = src.commands.account.List().get_all_accounts_info()
-        for account in accounts:
-            info = account.element_info.name
-            if self._account_login in info and info.endswith('widget'):
-                return account.element_info
+        proxies_info = commands.proxy.List.get_all_proxies_info()
+        for account_info in proxies_info:
+            if self.login in account_info:
+                return AccountGetStatus.FOUND, None
 
-        raise commands.AccountNotFound
+        return AccountGetStatus.NOT_FOUND, None

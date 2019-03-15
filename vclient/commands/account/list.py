@@ -67,8 +67,6 @@ class List(commands.Command):
 
         clean_name_with_widget = [cls.clean_login(element) for element in name_with_widget]
 
-
-
         return name_without_widget
 
     @classmethod
@@ -76,12 +74,12 @@ class List(commands.Command):
     def get_all_accounts_info(cls):
         accounts_info = cls.get_accounts_info()
 
-        x, y = cls.get_list_box_coordinate_center()
+        first_item = accounts_info[0]
+        last_item = accounts_info[-1]
 
         accounts = set(accounts_info)
 
-        first_item = accounts_info[0]
-        last_item = accounts_info[-1]
+        x, y = cls.get_list_box_coordinate_center()
 
         while True:
             pyautogui.click(x, y)

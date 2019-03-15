@@ -1,26 +1,24 @@
-from enum import Enum, auto
-
 import pywinauto
 
 import commands
-from common import WorkerStatus
+from common.common import WorkerStatus
 
 
 class Status(commands.Command):
     def execute(self):
         if self.app.is_process_running():
             if self.is_ready():
-                return WorkerStatus.READY, None
+                return WorkerStatus.READY
 
             if self.is_work():
-                return WorkerStatus.WORK, None
+                return WorkerStatus.WORK
 
             if self.is_not_auth():
-                return WorkerStatus.NOT_AUTH, None
+                return WorkerStatus.NOT_AUTH
 
             return WorkerStatus.ERROR
         else:
-            return WorkerStatus.STOP, None
+            return WorkerStatus.STOP
 
     @commands.utils.wait_before(1)
     def is_ready(self):

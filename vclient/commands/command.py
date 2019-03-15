@@ -1,10 +1,8 @@
-import pywinauto
-from pywinauto import WindowSpecification
-
-import commands
-from common import ResultMessage
-
 import os
+
+import pywinauto
+from common.common import ResultMessage
+from pywinauto import WindowSpecification
 
 
 class Command:
@@ -16,7 +14,12 @@ class Command:
     APP_DIR = f'{os.path.split(os.getenv("APPDATA"))[0]}\\Local\\VtopeBot'
 
     def __init__(self):
-        self._status, self._data = self.execute()
+        result = [self.execute()]
+        if len(result) == 2:
+            self._status, self._data = result
+        else:
+            self._status = result
+            self._data = None
 
     def execute(self):  # написать вовзврат двух аргументов
         raise NotImplementedError

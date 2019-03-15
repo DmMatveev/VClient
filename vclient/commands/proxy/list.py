@@ -1,50 +1,104 @@
-from vclient import commands
+from enum import Enum
+from typing import NamedTuple
+
+import commands
+import pyautogui
 
 
-#TODO ListBox0 пропал
+class AccountInfo(NamedTuple):
+    login: str
+    status: str
+    type: str
 
 class List(commands.Command):
-    list = 'ListBox0'
-    status = ['badauth', 'validating', 'manual']
+    STEP_SCROLL = 0
+
+    ACCOUNT_STATUS = ['badauth', 'validating', 'manual']
 
     def _check_status(self, info):
-        for status in self.status:
+        for status in self.ACCOUNT_STATUS:
             if status in info:
                 return status
 
         raise Exception()
 
-    def _clean_login(self, login):
-        # Хак, появляются рандомные числа в наименование
-        # Закономерность, что эти числа заканичвается одинаково и они одинакового размера
+    @staticmethod
+    def clean_login(login: str) -> str:
+        """
+        Хак, появляются рандомные числа в наименование
+        Закономерность, что эти числа заканичвается одинаково и они одинакового размера
+        """
         if '_' in login:
             number_size = login.rindex('_') - login.index('_') - 1
             login = login[number_size * 2 + 2:]
 
         return login
 
-    def get_accounts(self):
-        # TODO проверить когда нет аккаунтов
-        #TODO проверить что пусто
-        return self.pane[self.list].children()
+    @classmethod
+    def get_list_box_children(cls):
+        return cls.pane.child_window(control_type='List', ctrl_index=0).children()
+
+    @classmethod
+    def get_list_box_coordinate_center(cls):
+        list_box = cls.pane.child_window(control_type='List', ctrl_index=0)
+
+        list_box_coordinate = list_box.rectangle()
+        x = list_box_coordinate.left + (list_box_coordinate.right - list_box_coordinate.left) / 2
+        y = list_box_coordinate.top + (list_box_coordinate.bottom - list_box_coordinate.top) / 2
+
+        return x, y
+
+    @classmethod
+    def get_proxies_info(cls):
+        def get_name_widget(widget):
+            return widget.element_info.name
+
+        elements = cls.get_list_box_children()
+
+        name_with_widget = [get_name_widget(element) for element in elements if
+                            get_name_widget(element).endswith('widget')]
+
+        name_without_widget = [element[:element.find('_____')] for element in name_with_widget]
+
+        clean_name_with_widget = [cls.clean_login(element) for element in name_with_widget]
+
+        return name_without_widget
+
+    @classmethod
+    @commands.utils.wait_before(1)
+    def get_all_proxies_info(cls):
+        proxies_info = cls.get_proxies_info()
+
+        first_item = proxies_info[0]
+        last_item = proxies_info[-1]
+
+        accounts = set(proxies_info)
+
+        x, y = cls.get_list_box_coordinate_center()
+
+        while True:
+            pyautogui.click(x, y)
+            pyautogui.scroll(-1000)
+            proxies_info = cls.get_proxies_info()
+            accounts = accounts.union(proxies_info)
+
+            if proxies_info[-1] == last_item:
+                break
+
+            last_item = proxies_info[-1]
+
+        while True:
+            pyautogui.click(x, y)
+            pyautogui.scroll(1000)
+            proxies_info = cls.get_proxies_info()
+
+            if proxies_info[0] == first_item:
+                break
+
+        return accounts
+
+    def get_account_info(self, account_info):
+        d = 2
 
     def execute(self):
-        items = []
-
-        for account in self.get_accounts():
-            info = account.element_info.name
-
-            if info.endswith('widget'):
-                info = info[1:info.rindex('1')]
-                status = self._check_status(info)
-
-                login = info.replace(status, '')
-                login = self._clean_login(login)
-
-                items.append({
-                    'login': login,
-                    'status': status
-                })
-
-        return items
-
+        return list(map(self.get_account_info, self.get_proxies_info()))

@@ -1,20 +1,17 @@
 from unittest import TestCase
 
-from vclient import commands
-
-import time
+import commands
+from common.proxy import ProxyAddParameters, ProxyType
 
 
 class TestProxy(TestCase):
     @classmethod
     def setUpClass(cls):
-        commands.application.Stop().execute()
-        commands.application.Start().execute()
-        time.sleep(5)
-        commands.Command.app.print_control_identifiers(depth=1000)
+        commands.application.Start()
 
-    def test1_check_invalid_parameters(self):
-        pass
-
-    def test2_add_proxy(self):
-        pass
+    def test1_add_proxy(self):
+        for i in range(5):
+            parameters = ProxyAddParameters(f'{i}{i}', 50, ProxyType.HTTPS, 'login', 'password')
+            result = commands.proxy.Add(parameters)
+            #self.assertEqual(result.status, AccountAddStatus.ADD)
+            #self.assertEqual(result.data, None)

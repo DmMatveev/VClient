@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from common import StopStatus, StartStatus, WorkerStatus, AuthStatus, ApplicationAuthParameters
+from common.common import StopStatus, StartStatus, WorkerStatus, AuthStatus, ApplicationAuthParameters
 from vclient import commands
 
 

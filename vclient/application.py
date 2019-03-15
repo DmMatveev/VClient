@@ -1,15 +1,14 @@
 import logging
 import pickle
-from typing import Dict, NamedTuple
+from typing import NamedTuple
 
 import commands
 import pika
 import settings
-from commands import Command
+from common.common import CommandMessage, ResultMessage
 from pika import BasicProperties
 from pika.adapters.blocking_connection import BlockingChannel, BlockingConnection
 from pika.channel import Channel
-from common import CommandMessage, ResultMessage
 
 log = logging.getLogger(__name__)
 

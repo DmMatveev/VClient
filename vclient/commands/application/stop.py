@@ -2,7 +2,7 @@ import logging
 
 import commands
 import psutil
-from common import StopStatus
+from common.common import StopStatus
 
 log = logging.getLogger(__name__)
 
@@ -23,8 +23,8 @@ class Stop(commands.Command):
             commands.Command.pane = None
         except Exception:
             log.exception('')
-            return StopStatus.ERROR, None
+            return StopStatus.ERROR
 
         commands.Command.pane = None
 
-        return StopStatus.STOP, None
+        return StopStatus.STOP

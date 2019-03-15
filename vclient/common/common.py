@@ -17,11 +17,6 @@ class ApplicationAuthParameters(NamedTuple):
     password: str
 
 
-class AccountAddParameters(NamedTuple):
-    login: str
-    password: str
-    type: str = ''
-
 
 class WorkerStatus(Enum):
     NOT_AUTH = 'Vtope bot не авторизован'
@@ -55,6 +50,3 @@ class ResetStatus(Enum):
     RESET = auto()
 
 
-class AccountAddStatus(Enum):
-    ERROR = 'Неизвестная ошибка',
-    ADD = 'Аккаунт успешно добавлен'

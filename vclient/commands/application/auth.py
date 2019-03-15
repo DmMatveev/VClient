@@ -1,6 +1,6 @@
 import commands
 import pywinauto
-from common import AuthStatus, ApplicationAuthParameters
+from common.common import AuthStatus, ApplicationAuthParameters
 
 
 class Auth(commands.Command):
@@ -31,7 +31,7 @@ class Auth(commands.Command):
 
     def execute(self):
         if self.is_auth():
-            return AuthStatus.ERROR_ALREADY_AUTH, None
+            return AuthStatus.ERROR_ALREADY_AUTH
 
         self.write_data()
 
@@ -39,7 +39,7 @@ class Auth(commands.Command):
 
         for _ in range(6):
             if self.is_auth():
-                return AuthStatus.AUTH, None
+                return AuthStatus.AUTH
 
         try:
             self.pane[self.TEXT_ERROR_AUTH].wait('exists', timeout=5)
@@ -53,6 +53,6 @@ class Auth(commands.Command):
         except pywinauto.application.TimeoutError:
             pass
         else:
-            return AuthStatus.ERROR_SERVER_NOT_RESPONSE, None
+            return AuthStatus.ERROR_SERVER_NOT_RESPONSE
 
-        return AuthStatus.ERROR, None
+        return AuthStatus.ERROR

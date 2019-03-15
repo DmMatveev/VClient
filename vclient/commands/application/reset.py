@@ -2,7 +2,7 @@ import os
 
 import commands
 
-from common import ResetStatus
+from common.common import ResetStatus
 
 
 class Reset(commands.Command):
@@ -10,7 +10,7 @@ class Reset(commands.Command):
 
     def execute(self):
         if self.app.is_process_running():
-            return ResetStatus.ERROR_APP_START, None
+            return ResetStatus.ERROR_APP_START
 
         try:
             files = os.listdir(self.APP_DIR)
@@ -20,6 +20,6 @@ class Reset(commands.Command):
                     path = os.path.join(self.APP_DIR, file)
                     os.remove(path)
         except Exception:
-            return ResetStatus.ERROR, None
+            return ResetStatus.ERROR
 
-        return ResetStatus.RESET, None
+        return ResetStatus.RESET
