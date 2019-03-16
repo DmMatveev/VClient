@@ -1,4 +1,4 @@
-from enum import Enum, auto
+from enum import Enum
 from typing import NamedTuple
 
 
@@ -10,7 +10,9 @@ class AccountType(Enum):
 class AccountStatus(Enum):
     badauth = 'Ошибка авторизации'
     validating = 'Валидация'
-    manual = 'Вручную'
+    manual = 'Ручная авторизация'
+    working = 'В работе'
+    sleep = 'Спит'
 
 
 class AccountInfo(NamedTuple):

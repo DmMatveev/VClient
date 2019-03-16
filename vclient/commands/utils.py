@@ -43,7 +43,7 @@ def get_list_box_coordinate_center(list_box: WindowSpecification):
     return x, y
 
 
-@wait_before(0.5)
+@wait_before(1)
 def get_all_items_info_string(list_box: WindowSpecification):
     items_string = get_items_info_string(list_box)
 
@@ -56,6 +56,7 @@ def get_all_items_info_string(list_box: WindowSpecification):
     while True:
         pyautogui.click(x, y)
         pyautogui.scroll(-1000)
+        pyautogui.move(0, 0)
 
         items_string = get_items_info_string(list_box)
 
@@ -72,6 +73,7 @@ def get_all_items_info_string(list_box: WindowSpecification):
 
         pyautogui.click(x, y)
         pyautogui.scroll(1000)
+        pyautogui.move(0, 0)
 
         items_string = get_items_info_string(list_box)
 
@@ -106,6 +108,7 @@ def click_item_in_list_box(list_box, find_item_name: str,
     while True:
         pyautogui.click(x, y)
         pyautogui.scroll(-1000)
+        pyautogui.move(0, 0)
 
         items = get_items_info(list_box)
 
@@ -140,40 +143,15 @@ def click_item_in_list_box(list_box, find_item_name: str,
 
         last_item = items[-1]
 
-    count_scroll = 0
-    while True:
-        count_scroll += 1
-
-        pyautogui.click(x, y)
-        pyautogui.scroll(1000)
-
-        items = get_items_info(list_box)
-
-        if items[0].name == first_item:
-            break
-
-        if count_scroll >= 50:
-            log.warning('Первый элемент поменялся')
-            break
-
-    pyautogui.scroll(1000)
-    pyautogui.scroll(1000)
-
-    return found_item
-
-
 def get_items_info(list_box: WindowSpecification) -> List[ElementInfo]:
     items = list_box.children()
-    d = items[0].element_info.name
-    return [element.element_info for element in items if element.element_info.name.endswith('widget')]
+    return [item.element_info for item in items if item.element_info.name.endswith('widget')]
 
 
 def get_items_info_string(list_box: WindowSpecification):
     items = get_items_info(list_box)
 
     items = [item.name for item in items]
-
-    items = [items for item in items if item.endswith('widget')]
 
     items = list(map(lambda x: x.replace('_____widget', ''), items))
 

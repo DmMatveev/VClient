@@ -3,13 +3,16 @@ from typing import NamedTuple
 
 
 class ProxyType(Enum):
+    HTTPS = auto()  # Обязательно перед HTTP, проходит проверка в in
     HTTP = auto()
-    HTTPS = auto()
     SOCKS5 = auto()
 
 
 class ProxyStatus(Enum):
-    pass
+    badstate = 'Прокси не работает'
+    validating = 'Валидация'
+    queued = 'В очереди на работу'
+    working = 'В работе'
 
 
 class ProxyInfo(NamedTuple):

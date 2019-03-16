@@ -29,18 +29,18 @@ class List(commands.Command):
 
         return AccountInfo(login, status, type_)
 
-    def get_account_status(self, account_info: str) -> AccountStatus:
+    def get_account_status(self, account_info_string: str) -> AccountStatus:
         for status in AccountStatus:
-            if status.name in account_info:
+            if status.name in account_info_string:
                 return status
 
         raise AttributeError('Статус аккаунта не найден')
 
-    def clean_status(self, account_info: str, status: AccountStatus):
-        return account_info.replace(status.name, '')[1:]
+    def clean_status(self, account_info_string: str, status: AccountStatus):
+        return account_info_string.replace(status.name, '')[1:]
 
-    def get_account_type(self, account_info: str) -> AccountType:
-        account_type_number = int(account_info[-1])
+    def get_account_type(self, account_info_string: str) -> AccountType:
+        account_type_number = int(account_info_string[-1])
         for type_ in AccountTypeNumber:
             if type_.value == account_type_number:
                 return AccountType[type_.name]

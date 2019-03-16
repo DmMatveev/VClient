@@ -10,7 +10,9 @@ class TestAccountCommand(TestCase):
         commands.application.Start()
 
     def test1_add_account_without_proxy(self):
-        for i in range(10):
+        d = commands.account.List().data
+
+        for i in range(5):
             parameters = AccountAddParameters(f'{i}@a.ru', 'password', AccountType.INSTAGRAM)
             result = commands.account.Add(parameters)
             self.assertEqual(result.status, AccountAddStatus.ADD)
