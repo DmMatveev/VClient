@@ -14,10 +14,11 @@ class Command:
     APP_DIR = f'{os.path.split(os.getenv("APPDATA"))[0]}\\Local\\VtopeBot'
 
     def __init__(self):
-        result = [self.execute()]
-        if len(result) == 2:
+        result = self.execute()
+
+        try:
             self._status, self._data = result
-        else:
+        except TypeError:
             self._status = result
             self._data = None
 

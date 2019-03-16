@@ -1,51 +1,23 @@
 from enum import Enum
-from typing import NamedTuple
 
 import commands
 import pyautogui
+from commands import utils
+from common.account import AccountInfo, AccountStatus, AccountType
 
 
-class AccountInfo(NamedTuple):
-    login: str
-    status: str
-    type: str
-
-
-class AccountStatus(Enum):
-    badauth = 'Ошибка авторизации'
-
+class AccountTypeNumber(Enum):
+    INSTAGRAM = 2
+    VK = 1
 
 class List(commands.Command):
-    STEP_SCROLL = 0
+    RPC = False
 
-    ACCOUNT_STATUS = ['badauth', 'validating', 'manual']
+    def get_list_box_children(self):
+        return self.pane.child_window(control_type='List', ctrl_index=0).children()
 
-    def _check_status(self, info):
-        for status in self.ACCOUNT_STATUS:
-            if status in info:
-                return status
-
-        raise Exception()
-
-    @staticmethod
-    def clean_login(login: str) -> str:
-        """
-        Хак, появляются рандомные числа в наименование
-        Закономерность, что эти числа заканичвается одинаково и они одинакового размера
-        """
-        if '_' in login:
-            number_size = login.rindex('_') - login.index('_') - 1
-            login = login[number_size * 2 + 2:]
-
-        return login
-
-    @classmethod
-    def get_list_box_children(cls):
-        return cls.pane.child_window(control_type='List', ctrl_index=0).children()
-
-    @classmethod
-    def get_list_box_coordinate_center(cls):
-        list_box = cls.pane.child_window(control_type='List', ctrl_index=0)
+    def get_list_box_coordinate_center(self):
+        list_box = self.pane.child_window(control_type='List', ctrl_index=0)
 
         list_box_coordinate = list_box.rectangle()
         x = list_box_coordinate.left + (list_box_coordinate.right - list_box_coordinate.left) / 2
@@ -53,38 +25,33 @@ class List(commands.Command):
 
         return x, y
 
-    @classmethod
-    def get_accounts_info(cls):
+    def get_accounts_info_string(self):
         def get_name_widget(widget):
             return widget.element_info.name
 
-        elements = cls.get_list_box_children()
+        elements = self.get_list_box_children()
 
-        name_with_widget = [get_name_widget(element) for element in elements if
-                            get_name_widget(element).endswith('widget')]
+        elements = [element.element_info.name for element in elements]
 
-        name_without_widget = [element[:element.find('_____')] for element in name_with_widget]
+        accounts_name = [element for element in elements if element.endswith('widget')]
 
-        clean_name_with_widget = [cls.clean_login(element) for element in name_with_widget]
+        return accounts_name
 
-        return name_without_widget
-
-    @classmethod
     @commands.utils.wait_before(1)
-    def get_all_accounts_info(cls):
-        accounts_info = cls.get_accounts_info()
+    def get_all_accounts_info_string(self):
+        accounts_info = self.get_accounts_info_string()
 
         first_item = accounts_info[0]
         last_item = accounts_info[-1]
 
         accounts = set(accounts_info)
 
-        x, y = cls.get_list_box_coordinate_center()
+        x, y = self.get_list_box_coordinate_center()
 
         while True:
             pyautogui.click(x, y)
             pyautogui.scroll(-1000)
-            accounts_info = cls.get_accounts_info()
+            accounts_info = self.get_accounts_info_string()
             accounts = accounts.union(accounts_info)
 
             if accounts_info[-1] == last_item:
@@ -95,15 +62,41 @@ class List(commands.Command):
         while True:
             pyautogui.click(x, y)
             pyautogui.scroll(1000)
-            accounts_info = cls.get_accounts_info()
+            accounts_info = self.get_accounts_info_string()
 
             if accounts_info[0] == first_item:
                 break
 
         return accounts
 
-    def get_account_info(self, account_info):
-        d = 2
+    def get_account_status(self, account_info: str) -> AccountStatus:
+        for status in AccountStatus:
+            if status.name in account_info:
+                return status
+
+        raise AttributeError('Статус аккаунта не найден')
+
+    def clean_status(self, account_info: str, status: AccountStatus):
+        return account_info.replace(status.name, '')[1:]
+
+    def get_account_type(self, account_info: str) -> AccountType:
+        account_type_number = int(account_info[-1])
+        for type_ in AccountTypeNumber:
+            if type_.value == account_type_number:
+                return AccountType[type_.name]
+
+    def get_account_info(self, account_info_string):
+        account_info_string = account_info_string[:account_info_string.find('_____')]
+        account_info_string = utils.clean_info_string(account_info_string)
+
+        status = self.get_account_status(account_info_string)
+        account_info_string = self.clean_status(account_info_string, status)
+
+        type_ = self.get_account_type(account_info_string)
+
+        login = account_info_string[:-1]
+
+        return AccountInfo(login, status, type_)
 
     def execute(self):
-        return list(map(self.get_account_info, self.get_accounts_info()))
+        return None, list(map(self.get_account_info, self.get_all_accounts_info_string()))

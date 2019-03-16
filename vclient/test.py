@@ -12,6 +12,8 @@ app = app.connect(path=path)
 
 pane = app.Pane
 
+pane.child_window(title="backgroundModalWidget", control_type="Custom").parent().children()[1].children()
+
 pane.print_control_identifiers(depth=1000)
 
 pane.child_window(title="backgroundModalWidget", control_type="Custom").click()
