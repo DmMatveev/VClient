@@ -1,6 +1,8 @@
 from enum import Enum, auto
+from typing import List
 
 import commands
+from common.proxy import ProxyInfo
 
 
 class ProxyGetStatus(Enum):
@@ -17,9 +19,9 @@ class Get(commands.Command):
         super().__init__()
 
     def execute(self):
-        proxies_info = commands.proxy.List.get_all_proxies_info()
-        for account_info in proxies_info:
-            if self.login in account_info:
-                return AccountGetStatus.FOUND, None
+        proxies_info: List[ProxyInfo] = commands.proxy.List().data
+        for proxy_info in proxies_info:
+            if self.ip in proxy_info.ip:
+                return ProxyGetStatus.FOUND
 
-        return AccountGetStatus.NOT_FOUND, None
+        return ProxyGetStatus.NOT_FOUND

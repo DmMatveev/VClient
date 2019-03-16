@@ -21,19 +21,28 @@ class Add(commands.Command):
     BUTTON_PROXY_ADD = 'Подключить прокcи'
 
     def __init__(self, parameters: ProxyAddParameters):
+        commands.application.Switch.switch_to_proxy()
         self.parameters = parameters
-
-        self.switch_to_proxy()
         super().__init__()
-        self.switch_to_account()
 
-    @commands.wait_after(1)
-    def switch_to_proxy(self):
-        self.pane[self.BUTTON_SWITCH_TO_PROXY].click()
+    def execute(self):
+        for _ in range(5):
+            try:
+                self.open_window()
 
-    @commands.wait_after(1)
-    def switch_to_account(self):
-        self.pane[self.BUTTON_SWITCH_TO_ACCOUNT].click()
+                self.pane[self.BUTTON_EXPAND_PROXY_INPUT].click()
+
+                self.write_data()
+
+                self.pane[self.BUTTON_PROXY_ADD].click()
+
+                if self.is_proxy_add():
+                    return ProxyAddStatus.ADD
+
+            except pywinauto.findwindows.ElementNotFoundError:
+                return ProxyAddStatus.ERROR
+
+        return ProxyAddStatus.ERROR_NOT_ADD
 
     @commands.wait_before(1)
     def write_data(self):
@@ -52,22 +61,3 @@ class Add(commands.Command):
     @commands.wait_after(1)
     def open_window(self):
         self.pane[self.BUTTON_OPEN_WINDOW_PROXY].click()
-
-    def execute(self):
-        for _ in range(3):
-            try:
-                self.open_window()
-
-                self.pane[self.BUTTON_EXPAND_PROXY_INPUT].click()
-
-                self.write_data()
-
-                self.pane[self.BUTTON_PROXY_ADD].click()
-
-                if self.is_proxy_add():
-                    return ProxyAddStatus.ADD
-
-            except pywinauto.findwindows.ElementNotFoundError:
-                return ProxyAddStatus.ERROR
-
-        return ProxyAddStatus.ERROR_NOT_ADD

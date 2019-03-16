@@ -1,10 +1,11 @@
 from enum import Enum
 
 import commands
+import pyautogui
 import pywinauto
+from commands import utils
 from commands.account.get import AccountGetStatus
 from common.account import AccountAddParameters, AccountAddStatus
-from pywinauto import WindowSpecification
 
 
 class AccountTypeNumber(Enum):
@@ -33,7 +34,15 @@ class Add(commands.Command):
 
                 if self.parameters.proxy != '':
                     self.pane.child_window(title="Запускать только через прокси", control_type="CheckBox").click()
-                    self.pane.child_window(title="Вручную", control_type="Button")
+                    self.pane.child_window(title="    Вручную", control_type="Button").click()
+
+                    proxies = self.pane['ПарольListBox']
+
+                    def asd(*args):
+                        d = 2
+
+                    item = utils.click_item_in_list_box(proxies, '33', asd)
+                    d = 2
 
                 self.pane[self.BUTTON_ACCOUNT_ADD].click()
 

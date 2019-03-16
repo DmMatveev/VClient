@@ -8,6 +8,17 @@ class ProxyType(Enum):
     SOCKS5 = auto()
 
 
+class ProxyStatus(Enum):
+    pass
+
+
+class ProxyInfo(NamedTuple):
+    ip: str
+    port: int
+    status: ProxyStatus
+    type: ProxyType
+
+
 class ProxyAddParameters(NamedTuple):
     ip: str
     port: int

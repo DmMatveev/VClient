@@ -1,6 +1,5 @@
-from enum import Enum
-
 import commands
+from commands import utils
 
 
 class Switch(commands.Command):
@@ -9,10 +8,20 @@ class Switch(commands.Command):
     BUTTON_SWITCH_TO_PROXY = 'Button11'
     BUTTON_SWITCH_TO_ACCOUNT = 'Button8'
 
-    def execute(self):
-        if self.LAYER_IS_ACCOUNT:
-            self.pane[self.BUTTON_SWITCH_TO_ACCOUNT].click()
-        else:
-            self.pane[self.BUTTON_SWITCH_TO_PROXY].click()
+    @classmethod
+    def switch_to_account(cls):
+        if cls.LAYER_IS_ACCOUNT:
+            return
 
+        cls.pane[cls.BUTTON_SWITCH_TO_ACCOUNT].click()
+        cls.LAYER_IS_ACCOUNT = True
+
+    @classmethod
+    @utils.wait_after(1)
+    def switch_to_proxy(cls):
+        if cls.LAYER_IS_ACCOUNT:
+            cls.pane[cls.BUTTON_SWITCH_TO_PROXY].click()
+            cls.LAYER_IS_ACCOUNT = False
+
+    def execute(self):
         return None
