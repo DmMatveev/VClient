@@ -7,8 +7,6 @@ from pywinauto.element_info import ElementInfo
 
 log = logging.getLogger(__name__)
 
-__all__ = ['wait_before', 'wait_after', 'get_all_items_info_string', 'clean_info_string']
-
 
 def wait_before(time_sleep):
     def decorator(method):
@@ -45,37 +43,35 @@ def get_list_box_coordinate_center(list_box: WindowSpecification):
 
 @wait_before(1)
 def get_all_items_info_string(list_box: WindowSpecification):
-    items_string = get_items_info_string(list_box)
-
-    last_item = items_string[-1]
-
-    items = set(items_string)
-
     x, y = get_list_box_coordinate_center(list_box)
-    while True:
-        pyautogui.click(x, y)
-        pyautogui.scroll(-1000)
 
+    items = set()
+
+    last_item_string = ''
+    while True:
         items_string = get_items_info_string(list_box)
 
         items = items.union(items_string)
 
-        if items_string[-1] == last_item:
+        if items_string[-1] == last_item_string:
             break
 
-        last_item = items_string[-1]
+        last_item_string = items_string[-1]
 
-    first_item = ''
+        pyautogui.click(x, y)
+        pyautogui.scroll(-1000)
+
+    first_item_string = ''
     while True:
         pyautogui.click(x, y)
         pyautogui.scroll(1000)
 
         items_string = get_items_info_string(list_box)
 
-        if items_string[0] == first_item:
+        if items_string[0] == first_item_string:
             break
 
-        first_item = items_string[0]
+        first_item_string = items_string[0]
 
     pyautogui.scroll(1000)
     pyautogui.scroll(1000)
@@ -85,10 +81,21 @@ def get_all_items_info_string(list_box: WindowSpecification):
     return items
 
 
-@wait_before(1)
 def get_items_info(list_box: WindowSpecification) -> List[ElementInfo]:
-    items = list_box.children()
-    return [item.element_info for item in items if item.element_info.name.endswith('widget')]
+    items_info = []
+
+    repeat_count = 0
+    while True:
+        repeat_count += 1
+
+        if repeat_count == 5:
+            raise RuntimeError('Превышено количество попыток получить информацию об видимых элементах')
+
+        if len(filter(lambda x: x.name == '', items_info)) != 0:
+            items_info = [item.element_info for item in list_box.children() if
+                          item.element_info.name.endswith('widget')]
+        else:
+            return items_info
 
 
 def get_items_info_string(list_box: WindowSpecification):
