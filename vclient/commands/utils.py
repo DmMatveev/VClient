@@ -47,7 +47,6 @@ def get_list_box_coordinate_center(list_box: WindowSpecification):
 def get_all_items_info_string(list_box: WindowSpecification):
     items_string = get_items_info_string(list_box)
 
-    first_item = items_string[0]
     last_item = items_string[-1]
 
     items = set(items_string)
@@ -66,10 +65,8 @@ def get_all_items_info_string(list_box: WindowSpecification):
 
         last_item = items_string[-1]
 
-    count_scroll = 0
+    first_item = ''
     while True:
-        count_scroll += 1
-
         pyautogui.click(x, y)
         pyautogui.scroll(1000)
 
@@ -78,13 +75,7 @@ def get_all_items_info_string(list_box: WindowSpecification):
         if items_string[0] == first_item:
             break
 
-        '''
-        Элементы могут менять свое имя при изменение состояния
-        Из-за этого по максимум поднимаем вверх        
-        '''
-        if count_scroll >= 50:
-            log.warning('Первый элемент поменялся')
-            break
+        first_item = items_string[0]
 
     pyautogui.scroll(1000)
     pyautogui.scroll(1000)

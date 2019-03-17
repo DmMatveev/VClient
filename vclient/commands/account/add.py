@@ -10,7 +10,7 @@ from common.account import AccountAddParameters, AccountAddStatus
 
 
 def click_item_in_list_box(list_box, find_item_name: str,
-                           function_click: Callable[[int, int, int, int], None] = None) -> bool:
+                           function_click: Callable[[int, int, int, int], None] = None):
     found_item = None
 
     items = get_items_info(list_box)

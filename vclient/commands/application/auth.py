@@ -1,5 +1,6 @@
 import commands
 import pywinauto
+from commands import utils
 from common.common import AuthStatus, ApplicationAuthParameters
 
 
@@ -29,13 +30,17 @@ class Auth(commands.Command):
 
         return True
 
+    @utils.wait_after(5)
+    def confirm(self):
+        self.pane[self.BUTTON_AUTH].click()
+
     def execute(self):
         if self.is_auth():
             return AuthStatus.ERROR_ALREADY_AUTH
 
         self.write_data()
 
-        self.pane[self.BUTTON_AUTH].click()
+        self.confirm()
 
         for _ in range(6):
             if self.is_auth():
