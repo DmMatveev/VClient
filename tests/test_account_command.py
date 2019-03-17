@@ -10,8 +10,6 @@ class TestAccountCommand(TestCase):
         commands.application.Start()
 
     def test1_add_account_without_proxy(self):
-        d = commands.account.List().data
-
         for i in range(5):
             parameters = AccountAddParameters(f'{i}@a.ru', 'password', AccountType.INSTAGRAM)
             result = commands.account.Add(parameters)
@@ -19,8 +17,10 @@ class TestAccountCommand(TestCase):
             self.assertEqual(result.data, None)
 
     def test2_add_account_with_proxy(self):
-        #for i in range(5, 10):
-        parameters = AccountAddParameters(f'1@a.ru', 'password', AccountType.INSTAGRAM, proxy='66')
-        result = commands.account.Add(parameters)
-        self.assertEqual(result.status, AccountAddStatus.ADD)
-        self.assertEqual(result.data, None)
+        proxy = 0
+        for i in range(1, 31):
+            proxy += i % 2
+            parameters = AccountAddParameters(f'{i}@a.ru', 'password', AccountType.INSTAGRAM, proxy=f'127.0.0.{proxy}')
+            result = commands.account.Add(parameters)
+            self.assertEqual(result.status, AccountAddStatus.ADD)
+            self.assertEqual(result.data, None)

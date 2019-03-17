@@ -1,5 +1,5 @@
 import logging
-from typing import Callable, List
+from typing import List
 
 import pyautogui
 from pywinauto import WindowSpecification
@@ -56,7 +56,6 @@ def get_all_items_info_string(list_box: WindowSpecification):
     while True:
         pyautogui.click(x, y)
         pyautogui.scroll(-1000)
-        pyautogui.move(0, 0)
 
         items_string = get_items_info_string(list_box)
 
@@ -73,7 +72,6 @@ def get_all_items_info_string(list_box: WindowSpecification):
 
         pyautogui.click(x, y)
         pyautogui.scroll(1000)
-        pyautogui.move(0, 0)
 
         items_string = get_items_info_string(list_box)
 
@@ -91,58 +89,12 @@ def get_all_items_info_string(list_box: WindowSpecification):
     pyautogui.scroll(1000)
     pyautogui.scroll(1000)
 
+    pyautogui.moveTo(50, 50, duration=0.1)
+
     return items
 
 
-@wait_before(0.5)
-def click_item_in_list_box(list_box, find_item_name: str,
-                           function_click: Callable[[int, int, int, int], None] = None) -> bool:
-    found_item = None
-
-    items = get_items_info(list_box)
-
-    first_item = items[0].name
-    last_item = items[-1].name
-
-    x, y = get_list_box_coordinate_center(list_box)
-    while True:
-        pyautogui.click(x, y)
-        pyautogui.scroll(-1000)
-        pyautogui.move(0, 0)
-
-        items = get_items_info(list_box)
-
-        for item in items:
-            if find_item_name in item.name:
-                found_item = True
-
-                list_box_rectangle = list_box.rectangle
-                list_box_top = list_box_rectangle.top
-                list_box_bottom = list_box_rectangle.top
-
-                found_item_rectangle = item.rectangle
-                found_item_top = found_item_rectangle.top
-                found_item_bottom = found_item_rectangle.bottom
-
-                if found_item_top < list_box_top:
-                    pyautogui.click(x, y)
-                    pyautogui.scroll(-(list_box_top - found_item_top + (list_box_top - found_item_top) / 2))
-
-                if found_item_bottom > list_box_bottom:
-                    pyautogui.click(x, y)
-                    pyautogui.scroll(found_item_bottom - list_box_bottom + (found_item_bottom - list_box_bottom) / 2)
-
-                function_click(found_item_rectangle.left,
-                               found_item_rectangle.top,
-                               found_item_rectangle.right,
-                               found_item_rectangle.bottom)
-                break
-
-        if found_item or items[-1] == last_item:
-            break
-
-        last_item = items[-1]
-
+@wait_before(1)
 def get_items_info(list_box: WindowSpecification) -> List[ElementInfo]:
     items = list_box.children()
     return [item.element_info for item in items if item.element_info.name.endswith('widget')]
