@@ -2,7 +2,7 @@ import logging
 
 import commands
 import psutil
-from common.common import StopStatus
+from common.common import CommandStatus
 
 log = logging.getLogger(__name__)
 
@@ -15,16 +15,10 @@ class Stop(commands.Command):
         return processes
 
     def execute(self):
-        try:
-            for p in self.get_processes():
-                parent = psutil.Process(p.pid)
-                parent.kill()
-
-            commands.Command.pane = None
-        except Exception:
-            log.exception('')
-            return StopStatus.ERROR
+        for p in self.get_processes():
+            parent = psutil.Process(p.pid)
+            parent.kill()
 
         commands.Command.pane = None
 
-        return StopStatus.STOP
+        return CommandStatus.SUCCESS

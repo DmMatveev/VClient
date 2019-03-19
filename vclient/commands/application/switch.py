@@ -9,6 +9,7 @@ class Switch(commands.Command):
     BUTTON_SWITCH_TO_ACCOUNT = 'Button8'
 
     @classmethod
+    @utils.wait_after(1)
     def switch_to_account(cls):
         if cls.LAYER_IS_ACCOUNT:
             return
