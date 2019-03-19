@@ -61,7 +61,6 @@ class Application:
             return
 
         log.debug('Command: %s', message.command)
-        log.debug('Parameters: %s', message.parameters)
 
         result: ResultMessage = self.call_command(message.command, message.parameters)
 

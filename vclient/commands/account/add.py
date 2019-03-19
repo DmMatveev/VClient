@@ -3,12 +3,12 @@ from enum import Enum
 import commands
 import pyautogui
 import pywinauto
-from commands.account.get import AccountGetStatus
 from commands.utils import get_items_info, get_list_box_coordinate_center
 from common.account import AccountAddParameters, AccountAddStatus
-
-
 # Соответсвие номера кнопки в типом аккаунта
+from common.common import CommandStatus
+
+
 class AccountTypeNumber(Enum):
     INSTAGRAM = 0
     VK = 1
@@ -27,23 +27,25 @@ class Add(commands.Command):
         super().__init__()
 
     def execute(self):
-        for _ in range(3):
-            try:
-                self.open_window()
+        try:
+            self.open_window()
 
-                self.choose_type_account()
+            self.choose_type_account()
 
-                self.write_data()
+            self.write_data()
 
-                if self.parameters.proxy != '':
-                    self.choose_proxy()
+            if self.parameters.proxy != '':
+                self.choose_proxy()
 
-                self.pane[self.BUTTON_ACCOUNT_ADD].click()
+            self.pane[self.BUTTON_ACCOUNT_ADD].click()
 
-            except pywinauto.findwindows.ElementNotFoundError:
-                return AccountAddStatus.ERROR
+        except pywinauto.findwindows.ElementNotFoundError:
+            return AccountAddStatus.ERROR
 
-        return AccountAddStatus.ERROR_NOT_ADD
+        except pywinauto.findwindows.ElementAmbiguousError:
+            return AccountAddStatus.ERROR
+
+        return CommandStatus.SUCCESS
 
     def select_proxy(self, select_proxy_ip: str):
         def choose_proxy(left, top, right, bottom):
@@ -111,7 +113,6 @@ class Add(commands.Command):
             items = get_items_info(list_box)
 
     def choose_proxy(self):
-
 
         self.pane.child_window(title="Запускать только через прокси", control_type="CheckBox").click()
 

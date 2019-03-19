@@ -41,14 +41,19 @@ def get_list_box_coordinate_center(list_box: WindowSpecification):
     return x, y
 
 
-@wait_before(1)
 def get_all_items_info_string(list_box: WindowSpecification):
     x, y = get_list_box_coordinate_center(list_box)
 
-    items = set()
+    items = set(get_items_info_string(list_box))
+
+    if len(items) == 0:
+        return []
 
     last_item_string = ''
     while True:
+        pyautogui.click(x, y)
+        pyautogui.scroll(-1000)
+
         items_string = get_items_info_string(list_box)
 
         items = items.union(items_string)
@@ -57,9 +62,6 @@ def get_all_items_info_string(list_box: WindowSpecification):
             break
 
         last_item_string = items_string[-1]
-
-        pyautogui.click(x, y)
-        pyautogui.scroll(-1000)
 
     first_item_string = ''
     while True:
@@ -82,20 +84,8 @@ def get_all_items_info_string(list_box: WindowSpecification):
 
 
 def get_items_info(list_box: WindowSpecification) -> List[ElementInfo]:
-    items_info = []
-
-    repeat_count = 0
-    while True:
-        repeat_count += 1
-
-        if repeat_count == 5:
-            raise RuntimeError('Превышено количество попыток получить информацию об видимых элементах')
-
-        if len(filter(lambda x: x.name == '', items_info)) != 0:
-            items_info = [item.element_info for item in list_box.children() if
-                          item.element_info.name.endswith('widget')]
-        else:
-            return items_info
+    return [item.element_info for item in list_box.children() if
+            item.element_info.name.endswith('widget')]
 
 
 def get_items_info_string(list_box: WindowSpecification):

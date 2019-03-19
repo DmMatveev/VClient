@@ -15,7 +15,7 @@ class Status(commands.Command):
                 return CommandStatus.SUCCESS, ApplicationStatus.READY
 
             if self.is_work():
-                return CommandStatus.SUCCESS, ApplicationStatus.READY
+                return CommandStatus.SUCCESS, ApplicationStatus.WORK
 
             if self.is_not_auth():
                 try:
@@ -37,9 +37,11 @@ class Status(commands.Command):
                 else:
                     return CommandStatus.SUCCESS, ApplicationStatus.SERVER_NOT_RESPONSE
 
-                return CommandStatus.ERROR
+                return CommandStatus.SUCCESS, ApplicationStatus.NOT_AUTH
 
             return CommandStatus.ERROR
+
+        return CommandStatus.SUCCESS, ApplicationStatus.STOP
 
     @commands.utils.wait_before(1)
     def is_ready(self):
@@ -65,4 +67,4 @@ class Status(commands.Command):
 
     @commands.utils.wait_before(1)
     def is_work(self):
-        return True
+        return False

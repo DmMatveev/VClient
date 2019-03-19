@@ -1,14 +1,31 @@
 import commands
+import pywinauto
 from commands import utils
+from common.common import CommandStatus
 from common.proxy import ProxyStatus, ProxyInfo, ProxyType
 
 
 class List(commands.Command):
-    RPC = False
+    def __init__(self):
+        commands.application.Switch.switch_to_proxy()
+
+        super().__init__()
 
     def execute(self):
-        list_box = self.pane.child_window(control_type='List', ctrl_index=1)
-        return None, list(map(self.get_proxy_info, utils.get_all_items_info_string(list_box)))
+        try:
+            list_box = self.pane.child_window(control_type='List', ctrl_index=1)
+            all_items_info_string = utils.get_all_items_info_string(list_box)
+
+            if len(all_items_info_string) == 0:
+                return CommandStatus.SUCCESS, []
+
+            return CommandStatus.SUCCESS, list(map(self.get_proxy_info, all_items_info_string))
+
+        except pywinauto.findwindows.ElementNotFoundError:
+            return CommandStatus.ERROR
+
+        except pywinauto.findwindows.ElementAmbiguousError:
+            return CommandStatus.ERROR
 
     @classmethod
     def get_proxy_info(cls, proxy_info_string) -> ProxyInfo:
