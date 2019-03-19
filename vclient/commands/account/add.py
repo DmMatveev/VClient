@@ -56,11 +56,14 @@ class Add(commands.Command):
         found_item = None
         last_item = None
 
+        self.pane['ПарольListBox'].draw_outline()
+
         x, y = get_list_box_coordinate_center(list_box)
         while True:
             items = get_items_info(list_box)
 
             for item in items:
+
                 if self.parameters.proxy == commands.proxy.List.get_proxy_info(item.name).ip:
                     found_item = True
 
@@ -73,12 +76,33 @@ class Add(commands.Command):
                     found_item_bottom = found_item_rectangle.bottom
 
                     rectangle = item.rectangle
-                    choose_proxy(rectangle.left,
-                                 rectangle.top,
-                                 rectangle.right,
-                                 rectangle.bottom)
 
-                    break
+                    if found_item_top < list_box_top:
+                        pyautogui.click(x, y)
+                        pyautogui.scroll(50)
+
+                    elif found_item_bottom > list_box_bottom:
+                        pyautogui.click(x, y)
+                        pyautogui.scroll(-50)
+
+                    else:
+                        rectangle = item.rectangle
+                        choose_proxy(rectangle.left,
+                                     rectangle.top,
+                                     rectangle.right,
+                                     rectangle.bottom)
+
+                        return
+
+                    items = get_items_info(list_box)
+                    for item in items:
+                        if self.parameters.proxy == commands.proxy.List.get_proxy_info(item.name).ip:
+                            rectangle = item.rectangle
+                            choose_proxy(rectangle.left,
+                                         rectangle.top,
+                                         rectangle.right,
+                                         rectangle.bottom)
+                            return
 
             if found_item or items[-1] == last_item:
                 return
@@ -87,7 +111,7 @@ class Add(commands.Command):
 
             pyautogui.click(x, y)
             pyautogui.scroll(-1000)
-
+            pyautogui.moveTo(50, 50, duration=0.1)
 
     def choose_proxy(self):
         self.pane.child_window(title="Запускать только через прокси", control_type="CheckBox").click()

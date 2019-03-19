@@ -2,6 +2,7 @@ from unittest import TestCase
 
 from common.account import AccountAddParameters, AccountType, AccountAddStatus
 import commands
+from common.common import CommandStatus
 
 
 class TestAccountCommand(TestCase):
@@ -22,5 +23,5 @@ class TestAccountCommand(TestCase):
             proxy += i % 2
             parameters = AccountAddParameters(f'{i}@a.ru', 'password', AccountType.INSTAGRAM, proxy=f'127.0.0.{proxy}')
             result = commands.account.Add(parameters)
-            self.assertEqual(result.status, AccountAddStatus.ADD)
+            self.assertEqual(result.status, CommandStatus.SUCCESS)
             self.assertEqual(result.data, None)
