@@ -45,7 +45,6 @@ class Application:
 
     def handler_commands(self, channel: Channel, method, properties: BasicProperties, body):
         log.debug('Message received')
-        log.debug('Message properties %s', properties)
 
         channel.basic_ack(method.delivery_tag)
 

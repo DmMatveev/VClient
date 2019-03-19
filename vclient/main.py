@@ -1,17 +1,13 @@
 import logging.config
 import time
 
-try:
-    import settings
-    from application import Application
-    from pika.exceptions import ConnectionClosed, IncompatibleProtocolError
+import settings
+from application import Application
+from pika.exceptions import ConnectionClosed, IncompatibleProtocolError
 
-    log = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
-    logging.config.dictConfig(settings.log_config)
-except Exception as e:
-    print(e)
-    input()
+logging.config.dictConfig(settings.log_config)
 
 
 def init():
