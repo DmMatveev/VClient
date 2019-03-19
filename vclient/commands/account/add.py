@@ -59,11 +59,15 @@ class Add(commands.Command):
         self.pane['ПарольListBox'].draw_outline()
 
         x, y = get_list_box_coordinate_center(list_box)
+        print(f'Найти {self.parameters.proxy}')
         while True:
             items = get_items_info(list_box)
 
-            for item in items:
+            if len(items) == 0:
+                d = 2
 
+            for item in items:
+                print(commands.proxy.List.get_proxy_info(item.name).ip)
                 if self.parameters.proxy == commands.proxy.List.get_proxy_info(item.name).ip:
                     found_item = True
 
@@ -110,8 +114,8 @@ class Add(commands.Command):
             last_item = items[-1]
 
             pyautogui.click(x, y)
-            pyautogui.scroll(-1000)
-            pyautogui.moveTo(50, 50, duration=0.1)
+            pyautogui.scroll(-200)
+            pyautogui.click(x, y)
 
     def choose_proxy(self):
         self.pane.child_window(title="Запускать только через прокси", control_type="CheckBox").click()
