@@ -47,7 +47,7 @@ class Add(commands.Command):
 
         return CommandStatus.SUCCESS
 
-    def select_proxy(self, select_proxy_ip: str):
+    def select_proxy(self):
         def choose_proxy(left, top, right, bottom):
             pyautogui.click(left + 15, int(top + (bottom - top) / 2) - 5)
 
@@ -63,7 +63,7 @@ class Add(commands.Command):
         x, y = get_list_box_coordinate_center(list_box)
         while True:
             for item in items:
-                if select_proxy_ip == commands.proxy.List.get_proxy_info(item.name).ip:
+                if self.parameters.proxy == commands.proxy.List.get_proxy_info(item.name).ip:
                     found_item = True
 
                     list_box_rectangle = list_box.rectangle()
@@ -84,21 +84,21 @@ class Add(commands.Command):
 
                     else:
                         rectangle = item.rectangle
-                        function_click(rectangle.left,
-                                       rectangle.top,
-                                       rectangle.right,
-                                       rectangle.bottom)
+                        choose_proxy(rectangle.left,
+                                     rectangle.top,
+                                     rectangle.right,
+                                     rectangle.bottom)
 
                         return
 
                     items = get_items_info(list_box)
                     for item in items:
-                        if find_item_name == commands.proxy.List.get_proxy_info(item.name).ip:
+                        if self.parameters.proxy == commands.proxy.List.get_proxy_info(item.name).ip:
                             rectangle = item.rectangle
-                            function_click(rectangle.left,
-                                           rectangle.top,
-                                           rectangle.right,
-                                           rectangle.bottom)
+                            choose_proxy(rectangle.left,
+                                         rectangle.top,
+                                         rectangle.right,
+                                         rectangle.bottom)
                             return
 
             if found_item or items[-1] == last_item:
@@ -113,12 +113,11 @@ class Add(commands.Command):
             items = get_items_info(list_box)
 
     def choose_proxy(self):
-
         self.pane.child_window(title="Запускать только через прокси", control_type="CheckBox").click()
 
         self.pane.child_window(title="    Вручную", control_type="Button").click()
 
-        self.select_proxy(select_proxy)
+        self.select_proxy()
 
     def choose_type_account(self):
         window = self.pane.child_window(title="backgroundModalWidget", control_type="Custom")
