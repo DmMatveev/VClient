@@ -19,7 +19,6 @@ class AccountStatus(Enum):
 class AccountInfo(NamedTuple):
     login: str
     status: AccountStatus
-    type: AccountType
 
 
 class AccountAddParameters(NamedTuple):

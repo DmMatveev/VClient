@@ -1,7 +1,7 @@
 import commands
 import pywinauto
-from commands.proxy.get import ProxyGetStatus
-from common.proxy import ProxyAddParameters, ProxyAddStatus
+from common.common import CommandStatus
+from common.proxy import ProxyAddParameters
 
 
 class Add(commands.Command):
@@ -26,23 +26,21 @@ class Add(commands.Command):
         super().__init__()
 
     def execute(self):
-        for _ in range(5):
-            try:
-                self.open_window()
+        try:
+            self.open_window()
 
-                self.pane[self.BUTTON_EXPAND_PROXY_INPUT].click()
+            self.pane[self.BUTTON_EXPAND_PROXY_INPUT].click()
 
-                self.write_data()
+            self.write_data()
 
-                self.pane[self.BUTTON_PROXY_ADD].click()
+            self.pane[self.BUTTON_PROXY_ADD].click()
+        except pywinauto.findwindows.ElementNotFoundError:
+            return CommandStatus.ERROR
 
-                if self.is_proxy_add():
-                    return ProxyAddStatus.ADD
+        except pywinauto.findwindows.ElementAmbiguousError:
+            return CommandStatus.ERROR
 
-            except pywinauto.findwindows.ElementNotFoundError:
-                return ProxyAddStatus.ERROR
-
-        return ProxyAddStatus.ERROR_NOT_ADD
+        return CommandStatus.SUCCESS
 
     @commands.wait_before(1)
     def write_data(self):
@@ -50,13 +48,6 @@ class Add(commands.Command):
         self.pane[self.INPUT_PROXY_PORT].set_text(self.parameters.port)
         self.pane[self.INPUT_PROXY_LOGIN].set_text(self.parameters.login)
         self.pane[self.INPUT_PROXY_PASSWORD].set_text(self.parameters.password)
-
-    @commands.wait_before(1)
-    def is_proxy_add(self):
-        if commands.proxy.Get(self.parameters.ip).status == ProxyGetStatus.FOUND:
-            return True
-
-        return False
 
     @commands.wait_after(1)
     def open_window(self):

@@ -2,7 +2,7 @@ import os
 
 import commands
 import pywinauto
-from common.common import StartStatus
+from common.common import CommandStatus
 
 
 class Start(commands.Command):
@@ -13,7 +13,7 @@ class Start(commands.Command):
         path = os.path.join(self.APP_DIR, self.APP)
 
         if self.app.is_process_running():
-            return StartStatus.ERROR_ALREADY_START
+            return CommandStatus.ERROR
 
         #try:
         #    app = self.app.connect(path=path)
@@ -26,8 +26,8 @@ class Start(commands.Command):
         try:
             app = self.app.start(path, work_dir=self.APP_DIR)
         except pywinauto.application.AppStartError:
-            return StartStatus.START_ERROR
+            return CommandStatus.ERROR
 
         commands.Command.pane = app.Pane
 
-        return StartStatus.START
+        return CommandStatus.SUCCESS
