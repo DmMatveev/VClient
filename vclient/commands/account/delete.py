@@ -36,7 +36,6 @@ class Delete(commands.Command):
 
         return x, y
 
-    #TODO Все таки надо листать список, если будет много
 
     def _is_account_delete(self):
         try:

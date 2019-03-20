@@ -3,12 +3,12 @@ from enum import Enum
 import commands
 import pyautogui
 import pywinauto
-from commands.utils import get_items_info, get_list_box_coordinate_center
+from commands import utils
 from common.account import AccountAddParameters, AccountAddStatus
-# Соответсвие номера кнопки в типом аккаунта
 from common.common import CommandStatus
 
 
+# Соответсвие номера кнопки c типом аккаунта
 class AccountTypeNumber(Enum):
     INSTAGRAM = 0
     VK = 1
@@ -48,81 +48,23 @@ class Add(commands.Command):
         return CommandStatus.SUCCESS
 
     def select_proxy(self):
-        def choose_proxy(left, top, right, bottom):
-            pyautogui.click(left + 15, int(top + (bottom - top) / 2) - 5)
+        left, top, right, bottom = utils.select_item_in_list_box(self.pane['ПарольListBox'],
+                                                                 self.parameters.proxy,
+                                                                 commands.proxy.List.get_proxy_info,
+                                                                 'ip')
 
-        list_box = self.pane['ПарольListBox']
-
-        found_item = None
-        last_item = None
-
-        self.pane['ПарольListBox'].draw_outline()
-
-        x, y = get_list_box_coordinate_center(list_box)
-        print(f'Найти {self.parameters.proxy}')
-        while True:
-            items = get_items_info(list_box)
-
-            if len(items) == 0:
-                d = 2
-
-            for item in items:
-                print(commands.proxy.List.get_proxy_info(item.name).ip)
-                if self.parameters.proxy == commands.proxy.List.get_proxy_info(item.name).ip:
-                    found_item = True
-
-                    list_box_rectangle = list_box.rectangle()
-                    list_box_top = list_box_rectangle.top
-                    list_box_bottom = list_box_rectangle.bottom
-
-                    found_item_rectangle = item.rectangle
-                    found_item_top = found_item_rectangle.top
-                    found_item_bottom = found_item_rectangle.bottom
-
-                    rectangle = item.rectangle
-
-                    if found_item_top < list_box_top:
-                        pyautogui.click(x, y)
-                        pyautogui.scroll(50)
-
-                    elif found_item_bottom > list_box_bottom:
-                        pyautogui.click(x, y)
-                        pyautogui.scroll(-50)
-
-                    else:
-                        rectangle = item.rectangle
-                        choose_proxy(rectangle.left,
-                                     rectangle.top,
-                                     rectangle.right,
-                                     rectangle.bottom)
-
-                        return
-
-                    items = get_items_info(list_box)
-                    for item in items:
-                        if self.parameters.proxy == commands.proxy.List.get_proxy_info(item.name).ip:
-                            rectangle = item.rectangle
-                            choose_proxy(rectangle.left,
-                                         rectangle.top,
-                                         rectangle.right,
-                                         rectangle.bottom)
-                            return
-
-            if found_item or items[-1] == last_item:
-                return
-
-            last_item = items[-1]
-
-            pyautogui.click(x, y)
-            pyautogui.scroll(-200)
-            pyautogui.click(x, y)
+        pyautogui.click(left + 15, int(top + (bottom - top) / 2) - 5)
 
     def choose_proxy(self):
         self.pane.child_window(title="Запускать только через прокси", control_type="CheckBox").click()
 
-        self.pane.child_window(title="    Вручную", control_type="Button").click()
+        self.choose_proxy_type()
 
         self.select_proxy()
+
+    @utils.wait_after(1)
+    def choose_proxy_type(self):
+        self.pane.child_window(title="    Вручную", control_type="Button").click()
 
     def choose_type_account(self):
         window = self.pane.child_window(title="backgroundModalWidget", control_type="Custom")

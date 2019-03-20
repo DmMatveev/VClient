@@ -28,8 +28,9 @@ class List(commands.Command):
             return CommandStatus.ERROR
 
     @classmethod
-    def get_proxy_info(cls, proxy_info_string) -> ProxyInfo:
+    def get_proxy_info(cls, proxy_info_string: str) -> ProxyInfo:
         proxy_info_string = proxy_info_string.replace('_____widget', '')
+
         proxy_info_string = utils.clean_info_string(proxy_info_string)
 
         status = cls.get_proxy_status(proxy_info_string)
@@ -48,8 +49,6 @@ class List(commands.Command):
         for status in ProxyStatus:
             if status.name in proxy_info_string:
                 return status
-
-        print(proxy_info_string)
 
         raise AttributeError(f'Статус прокси не найден {proxy_info_string}')
 

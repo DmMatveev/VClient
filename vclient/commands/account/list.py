@@ -35,7 +35,8 @@ class List(commands.Command):
             return CommandStatus.ERROR
 
     @classmethod
-    def get_account_info(cls, account_info_string):
+    def get_account_info(cls, account_info_string: str):
+        account_info_string = account_info_string.replace('_____widget', '')
         account_info_string = utils.clean_info_string(account_info_string)
 
         status = cls.get_account_status(account_info_string)
