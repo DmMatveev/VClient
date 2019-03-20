@@ -1,5 +1,6 @@
 import commands
 import pywinauto
+from commands import utils
 from common.common import CommandStatus
 from common.proxy import ProxyAddParameters
 
@@ -25,6 +26,7 @@ class Add(commands.Command):
         self.parameters = parameters
         super().__init__()
 
+    @utils.wait_after(1)
     def execute(self):
         try:
             self.open_window()

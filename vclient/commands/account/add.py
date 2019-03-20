@@ -26,6 +26,7 @@ class Add(commands.Command):
         self.parameters = parameters
         super().__init__()
 
+    @utils.wait_after(1)
     def execute(self):
         try:
             self.open_window()
@@ -44,6 +45,10 @@ class Add(commands.Command):
 
         except pywinauto.findwindows.ElementAmbiguousError:
             return AccountAddStatus.ERROR
+
+        except RuntimeError:
+            self.pane.child_window(control_type='Button', ctrl_index=-1).click()
+            return CommandStatus.ERROR
 
         return CommandStatus.SUCCESS
 

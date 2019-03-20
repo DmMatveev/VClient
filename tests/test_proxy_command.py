@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 import commands
+from common.common import CommandStatus
 from common.proxy import ProxyAddParameters, ProxyType, ProxyAddStatus
 
 
@@ -13,5 +14,7 @@ class TestProxy(TestCase):
         for i in range(15):
             parameters = ProxyAddParameters(f'127.0.0.{i+1}', (i+1) * 1000, ProxyType.HTTPS, 'login', 'password')
             result = commands.proxy.Add(parameters)
-            self.assertEqual(result.status, ProxyAddStatus.ADD)
+            self.assertEqual(result.status, CommandStatus.SUCCESS)
             self.assertEqual(result.data, None)
+
+        self.assertEqual(commands.proxy.List(), 15)

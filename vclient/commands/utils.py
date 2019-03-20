@@ -101,11 +101,11 @@ def select_item_in_list_box(list_box: WindowSpecification, find_item: str,
         items = get_items_info(list_box)
 
         if len(items) == 0:
-            raise RuntimeError
+            raise RuntimeError('items != 0')
 
         for item in items:
             if item.name == '':
-                raise RuntimeError
+                raise RuntimeError('item.name == ""')
 
             if find_item == getattr(converting_info_to_string(item.name), field):
                 found_item = True
@@ -143,7 +143,7 @@ def select_item_in_list_box(list_box: WindowSpecification, find_item: str,
                                 rectangle.bottom)
 
         if found_item or items[-1] == last_item:
-            raise RuntimeError
+            raise RuntimeError('error')
 
         last_item = items[-1]
 

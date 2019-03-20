@@ -15,13 +15,13 @@ class Start(commands.Command):
         if self.app.is_process_running():
             return CommandStatus.ERROR
 
-        #try:
-        #    app = self.app.connect(path=path)
-        #except pywinauto.application.ProcessNotFoundError:
-        #    pass
-        #else:
-        #    commands.Command.pane = app.Pane
-        #    return CommandStatus.SUCCESS
+        try:
+            app = self.app.connect(path=path)
+        except pywinauto.application.ProcessNotFoundError:
+            pass
+        else:
+            commands.Command.pane = app.Pane
+            return CommandStatus.SUCCESS
 
         try:
             app = self.app.start(path, work_dir=self.APP_DIR)
