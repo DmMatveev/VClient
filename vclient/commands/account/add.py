@@ -37,7 +37,7 @@ class Add(commands.Command):
             if self.parameters.proxy != '':
                 self.choose_proxy()
 
-            self.pane.child_window(title="Добавить аккаунт", control_type="Button").click()
+            self.pane.child_window(title="Добавить аккаунт", control_type="Button", ctrl_index=1).click()
 
         except pywinauto.findwindows.ElementNotFoundError:
             return AccountAddStatus.ERROR
@@ -78,4 +78,4 @@ class Add(commands.Command):
 
     @commands.wait_after(1)
     def open_window(self):
-        self.pane.child_window(title="Добавить аккаунт", control_type="Button", ctrl_index=1).click()
+        self.pane.child_window(title="Добавить аккаунт", control_type="Button", ctrl_index=0).click()
