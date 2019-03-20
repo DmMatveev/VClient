@@ -90,6 +90,9 @@ def select_item_in_list_box(list_box: WindowSpecification, find_item: str,
     list_box_top = list_box_rectangle.top
     list_box_bottom = list_box_rectangle.bottom
 
+    print(f'Найти ip {find_item}')
+
+
     found_item = False
     last_item = None
     while True:
@@ -104,10 +107,10 @@ def select_item_in_list_box(list_box: WindowSpecification, find_item: str,
             if item.name == '':
                 raise RuntimeError
 
-            print(getattr(converting_info_to_string(item.name), field))
-
             if find_item == getattr(converting_info_to_string(item.name), field):
                 found_item = True
+
+                print(f'ip find {getattr(converting_info_to_string(item.name), field)}')
 
                 found_item_rectangle = item.rectangle
                 found_item_top = found_item_rectangle.top
