@@ -42,6 +42,10 @@ class Add(commands.Command):
         except pywinauto.findwindows.ElementAmbiguousError:
             return CommandStatus.ERROR
 
+        except RuntimeError:
+            self.pane.child_window(control_type='Button', ctrl_index=-1).click()
+            return CommandStatus.ERROR
+
         return CommandStatus.SUCCESS
 
     @commands.wait_before(1)

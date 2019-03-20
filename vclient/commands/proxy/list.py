@@ -27,6 +27,10 @@ class List(commands.Command):
         except pywinauto.findwindows.ElementAmbiguousError:
             return CommandStatus.ERROR
 
+        except RuntimeError:
+            self.pane.child_window(control_type='Button', ctrl_index=-1).click()
+            return CommandStatus.ERROR
+
     @classmethod
     def get_proxy_info(cls, proxy_info_string: str) -> ProxyInfo:
         proxy_info_string = proxy_info_string.replace('_____widget', '')

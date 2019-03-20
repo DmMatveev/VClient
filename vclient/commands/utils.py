@@ -164,7 +164,7 @@ def get_items_info_string(list_box: ListViewWrapper) -> str:
 
     items = [item.name for item in items]
 
-    items = list(map(lambda x: x.replace('_____widget', ''), items))
+    items = list(map(lambda x: x.replace('_____widget', ''), items)) #TODO наверное можно убрать
 
     return items
 
