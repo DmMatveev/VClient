@@ -1,5 +1,6 @@
 import commands
 import pywinauto
+from commands import utils
 from common.application import ApplicationStatus
 from common.common import CommandStatus
 
@@ -43,7 +44,7 @@ class Status(commands.Command):
 
         return CommandStatus.SUCCESS, ApplicationStatus.STOP
 
-    @commands.utils.wait_before(1)
+    @utils.wait_before(1)
     def is_ready(self):
         try:
             self.pane.child_window(title="Заработок не идет", control_type="Text").wrapper_object()
@@ -54,7 +55,7 @@ class Status(commands.Command):
 
         return True
 
-    @commands.utils.wait_before(1)
+    @utils.wait_before(1)
     def is_not_auth(self):
         try:
             self.pane.child_window(title="Регистрация", control_type="Button").wrapper_object()

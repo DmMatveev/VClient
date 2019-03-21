@@ -1,7 +1,8 @@
 import os
+from typing import NamedTuple
 
 import pywinauto
-from common.common import ResultMessage
+from common.common import ResultMessage, CommandStatus
 from pywinauto import WindowSpecification
 
 
@@ -14,7 +15,25 @@ class Command:
     APP_DIR = f'{os.path.split(os.getenv("APPDATA"))[0]}\\Local\\VtopeBot'
 
     def __init__(self):
-        result = self.execute()
+        try:
+            result = self.execute()
+
+        except pywinauto.findwindows.ElementNotFoundError:
+            result = self.error_handler()
+
+        except pywinauto.findwindows.ElementAmbiguousError:
+            result = self.error_handler()
+
+        except pywinauto.findbestmatch.MatchError:
+            result = self.error_handler()
+
+        except RuntimeError:
+            result = self.error_handler()
+
+        else:
+            if self.is_error():
+                result = CommandStatus.ERROR
+                self.error_handler()
 
         try:
             self._status, self._data = result
@@ -25,12 +44,18 @@ class Command:
     def execute(self):  # написать вовзврат двух аргументов
         raise NotImplementedError
 
+    def error_handler(self):
+        pass
+
+    def is_error(self):
+        return False
+
     @property
-    def status(self):
+    def status(self) -> CommandStatus:
         return self._status
 
     @property
-    def data(self):
+    def data(self) -> NamedTuple:
         return self._data
 
     @property

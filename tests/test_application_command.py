@@ -1,56 +1,65 @@
-from unittest import TestCase
+import unittest
 
-from vclient import commands
+import commands
+from common.application import ApplicationStatus, ApplicationAuthParameters
+from common.common import CommandStatus
 
 
-class TestApplicationCommand(TestCase):
+class TestApplicationCommand(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        commands.application.Stop()
-        commands.application.Reset()
+        #commands.application.Stop()
+        commands.application.Start()
 
     def test1_stop(self):
         result = commands.application.Stop()
-        self.assertEqual(result.status, StopStatus.STOP)
+        self.assertEqual(result.status, CommandStatus.SUCCESS)
         self.assertEqual(result.data, None)
 
-    def test2_start(self):
-        result = commands.application.Start()
-        self.assertEqual(result.status, StartStatus.START)
-        self.assertEqual(result.data, None)
-
-        result = commands.application.Start()
-        self.assertEqual(result.status, StartStatus.ERROR_ALREADY_START)
-        self.assertEqual(result.data, None)
-
-    def test3_get_status(self):
+    def test2_status(self):
         result = commands.application.Status()
-        self.assertEqual(result.status, WorkerStatus.NOT_AUTH)
+        self.assertEqual(result.status, CommandStatus.SUCCESS)
+        self.assertEqual(result.data, ApplicationStatus.STOP)
+
+    def test3_start(self):
+        result = commands.application.Start()
+        self.assertEqual(result.status, CommandStatus.SUCCESS)
         self.assertEqual(result.data, None)
 
-    def test4_check_auth(self):
+        result = commands.application.Start()
+        self.assertEqual(result.status, CommandStatus.ERROR)
+        self.assertEqual(result.data, None)
+
+    def test4_status(self):
+        result = commands.application.Status()
+        self.assertEqual(result.status, CommandStatus.SUCCESS)
+        self.assertEqual(result.data, ApplicationStatus.NOT_AUTH)
+
+    def test5_auth(self):
         parameters = ApplicationAuthParameters('login', 'password')
         result = commands.application.Auth(parameters)
-        self.assertEqual(result.status, AuthStatus.ERROR_LOGIN_OR_PASSWORD_INCORRECT)
+        self.assertEqual(result.status, CommandStatus.SUCCESS)
         self.assertEqual(result.data, None)
 
+    @unittest.skip
+    def test6_status(self):
+        result = commands.application.Status()
+        self.assertEqual(result.status, CommandStatus.SUCCESS)
+        self.assertEqual(result.data, ApplicationStatus.AUTH_LOGIN_OR_PASSWORD_INCORRECT)
+
+    def test7_auth(self):
         parameters = ApplicationAuthParameters('dm.matveev1996@yandex.ru', 'dm.matveev1996@yandex.ru')
         result = commands.application.Auth(parameters)
-        self.assertEqual(result.status, AuthStatus.AUTH)
+        self.assertEqual(result.status, CommandStatus.SUCCESS)
         self.assertEqual(result.data, None)
 
+    def test8_status(self):
+        result = commands.application.Status()
+        self.assertEqual(result.status, CommandStatus.SUCCESS)
+        self.assertEqual(result.data, ApplicationStatus.READY)
+
+    def test9_auth(self):
         parameters = ApplicationAuthParameters('login', 'password')
         result = commands.application.Auth(parameters)
-        self.assertEqual(result.status, AuthStatus.ERROR_ALREADY_AUTH)
-        self.assertEqual(result.data, None)
-
-    def test5_get_status(self):
-        result = commands.application.Status()
-        self.assertEqual(result.status, WorkerStatus.READY)
-        self.assertEqual(result.data, None)
-
-        commands.application.Stop()
-
-        result = commands.application.Status()
-        self.assertEqual(result.status, WorkerStatus.STOP)
+        self.assertEqual(result.status, CommandStatus.ERROR)
         self.assertEqual(result.data, None)

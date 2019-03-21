@@ -6,12 +6,6 @@ from common.proxy import ProxyAddParameters
 
 
 class Add(commands.Command):
-    BUTTON_OPEN_WINDOW_PROXY = 'Button9'
-    BUTTON_CLOSE_WINDOW_PROXY = ''
-
-    BUTTON_SWITCH_TO_PROXY = 'Button11'
-    BUTTON_SWITCH_TO_ACCOUNT = 'Button8'
-
     BUTTON_EXPAND_PROXY_INPUT = 'Button17'
 
     INPUT_PROXY_IP = 'IP проксиEdit2'
@@ -19,42 +13,48 @@ class Add(commands.Command):
     INPUT_PROXY_LOGIN = 'Порт проксиEdit'
     INPUT_PROXY_PASSWORD = 'Логин (необязательно)Edit'
 
-    BUTTON_PROXY_ADD = 'Подключить прокcи'
-
     def __init__(self, parameters: ProxyAddParameters):
         commands.application.Switch.switch_to_proxy()
         self.parameters = parameters
         super().__init__()
 
-    @utils.wait_after(1)
     def execute(self):
-        try:
-            self.open_window()
+        self.open_window()
 
-            self.pane[self.BUTTON_EXPAND_PROXY_INPUT].click()
+        self.expand_additional_field()
 
-            self.write_data()
+        self.write_data()
 
-            self.pane[self.BUTTON_PROXY_ADD].click()
-        except pywinauto.findwindows.ElementNotFoundError:
-            return CommandStatus.ERROR
-
-        except pywinauto.findwindows.ElementAmbiguousError:
-            return CommandStatus.ERROR
-
-        except RuntimeError:
-            self.pane.child_window(control_type='Button', ctrl_index=-1).click()
-            return CommandStatus.ERROR
+        self.save()
 
         return CommandStatus.SUCCESS
 
-    @commands.wait_before(1)
+    def is_error(self):
+        try:
+            self.pane.child_window(title="backgroundModalWidget", control_type="Custom").wait_not('exists', timeout=3)
+        except RuntimeError:
+            return True
+
+        return False
+
+    @utils.wait_after(1)
+    def error_handler(self):
+        self.pane.child_window(control_type='Button', ctrl_index=-1).click()
+
+    @utils.wait_after(1)
+    def open_window(self):
+        self.pane.child_window(title="Добавить прокси", control_type="Button").click()
+
+    @utils.wait_after(0.5)
+    def expand_additional_field(self):
+        self.pane.child_window(title="ввести логин и пароль", control_type="Button").click()
+
     def write_data(self):
         self.pane[self.INPUT_PROXY_IP].set_text(self.parameters.ip)
         self.pane[self.INPUT_PROXY_PORT].set_text(self.parameters.port)
         self.pane[self.INPUT_PROXY_LOGIN].set_text(self.parameters.login)
         self.pane[self.INPUT_PROXY_PASSWORD].set_text(self.parameters.password)
 
-    @commands.wait_after(1)
-    def open_window(self):
-        self.pane[self.BUTTON_OPEN_WINDOW_PROXY].click()
+    @utils.wait_after(1.5)
+    def save(self):
+        self.pane.child_window(title="Подключить прокcи", control_type="Button").click()

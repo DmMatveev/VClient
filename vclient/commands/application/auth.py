@@ -18,6 +18,13 @@ class Auth(commands.Command):
         self.parameters = parameters
         super().__init__()
 
+    def execute(self):
+        self.write_data()
+
+        self.confirm()
+
+        return CommandStatus.SUCCESS
+
     def write_data(self):
         self.pane[self.INPUT_LOGIN].set_text(self.parameters.login)
         self.pane[self.INPUT_PASSWORD].set_text(self.parameters.password)
@@ -25,16 +32,3 @@ class Auth(commands.Command):
     @utils.wait_after(5)
     def confirm(self):
         self.pane[self.BUTTON_AUTH].click()
-
-    def execute(self):
-        try:
-            self.write_data()
-            self.confirm()
-
-        except pywinauto.findwindows.ElementNotFoundError:
-            return CommandStatus.ERROR
-
-        except pywinauto.findwindows.ElementAmbiguousError:
-            return CommandStatus.ERROR
-
-        return CommandStatus.SUCCESS

@@ -10,6 +10,7 @@ class ApplicationStatus(Enum):
     READY = 'Vtope bot готов к работе'
     WORK = 'Vtope bot работает'
     STOP = 'Vtope bot закрыт'
+    ERROR = 'Ошибка VBot'
 
 
 class ApplicationAuthParameters(NamedTuple):
