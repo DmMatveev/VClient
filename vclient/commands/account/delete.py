@@ -12,7 +12,7 @@ class AccountNotDelete(Exception):
 
 class Delete(commands.Command):
     BUTTON_ACCOUNT_DELETE = 'УДАЛИТЬButton'
-    OFFSET_FROM_BUTTON = 54
+
 
     def __init__(self, account_login):
         self._account_login = account_login

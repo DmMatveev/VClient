@@ -19,16 +19,20 @@ class Command:
             result = self.execute()
 
         except pywinauto.findwindows.ElementNotFoundError:
-            result = self.error_handler()
+            result = CommandStatus.ERROR
+            self.error_handler()
 
         except pywinauto.findwindows.ElementAmbiguousError:
-            result = self.error_handler()
+            result = CommandStatus.ERROR
+            self.error_handler()
 
         except pywinauto.findbestmatch.MatchError:
-            result = self.error_handler()
+            result = CommandStatus.ERROR
+            self.error_handler()
 
         except RuntimeError:
-            result = self.error_handler()
+            result = CommandStatus.ERROR
+            self.error_handler()
 
         else:
             if self.is_error():

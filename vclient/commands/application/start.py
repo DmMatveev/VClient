@@ -8,7 +8,7 @@ from common.common import CommandStatus
 class Start(commands.Command):
     APP = 'vtopebot.exe'
 
-    @commands.utils.wait_after(15)
+    @commands.utils.wait_after(1)
     def execute(self):
         path = os.path.join(self.APP_DIR, self.APP)
 

@@ -16,10 +16,6 @@ from pika.exceptions import ConnectionClosed, IncompatibleProtocolError
 log = logging.getLogger(__name__)
 
 
-class ApplicationUpdate(Exception):
-    pass
-
-
 class Application:
     RESULT_QUEUE = 'worker'
 
@@ -70,14 +66,6 @@ class Application:
 
         log.debug('Command: %s', message.command)
 
-        if message.command == 'application.update':
-            channel.basic_publish('',
-                                  self.RESULT_QUEUE,
-                                  self.serialize(ResultMessage(CommandStatus.SUCCESS)),
-                                  properties=properties)
-
-            raise ApplicationUpdate
-
         result: ResultMessage = self.call_command(message.command, message.parameters)
 
         log.debug('Result command: %s', result)
@@ -114,17 +102,8 @@ class Application:
 
     @staticmethod
     def get_name_queue():
-        #request = requests.get('', params={'uuid': '123'})
-        '''
-            if успешно:
-                return name
-
-            ip адресс
-
-        '''
-
-        import urllib.request
-        ip = urllib.request.urlopen('http://ident.me').read().decode('utf8')
+        ip = requests.get('http://ident.me').text
+        requests.post(f'http://127.0.0.1:8000/workers/', data={'ip': ip})
         return ip
 
     def start(self):
@@ -138,7 +117,3 @@ class Application:
             except IncompatibleProtocolError:
                 log.debug('RabbitMQ connection broken')
                 time.sleep(30)
-
-            except ApplicationUpdate:
-                log.debug('Application update')
-                self.channel.close()

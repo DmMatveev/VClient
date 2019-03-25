@@ -23,6 +23,10 @@ log_config = {
 
         'pika': {
             'level': 'ERROR',
+        },
+
+        'urllib3.connectionpool': {
+            'level': 'ERROR'
         }
     }
 }

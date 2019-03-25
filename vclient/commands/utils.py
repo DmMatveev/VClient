@@ -79,9 +79,11 @@ def get_all_items_info_string(list_box: WindowSpecification) -> List[str]:
     return items
 
 
-def select_item_in_list_box(list_box: WindowSpecification, find_item: str,
-                            converting_info_to_string: Callable[[str], NamedTuple], field: str) -> Tuple[
-    int, int, int, int]:
+def select_item_in_list_box(list_box: WindowSpecification,
+                            find_item: str,
+                            converting_info_to_string: Callable[[str], NamedTuple],
+                            field: str) -> Tuple[int, int, int, int]:
+
     list_box = list_box.wrapper_object()
 
     x, y = get_list_box_coordinate_center(list_box)
@@ -89,9 +91,6 @@ def select_item_in_list_box(list_box: WindowSpecification, find_item: str,
     list_box_rectangle = list_box.rectangle()
     list_box_top = list_box_rectangle.top
     list_box_bottom = list_box_rectangle.bottom
-
-    print(f'Найти ip {find_item}')
-
 
     found_item = False
     last_item = None
@@ -110,13 +109,9 @@ def select_item_in_list_box(list_box: WindowSpecification, find_item: str,
             if find_item == getattr(converting_info_to_string(item.name), field):
                 found_item = True
 
-                print(f'ip find {getattr(converting_info_to_string(item.name), field)}')
-
                 found_item_rectangle = item.rectangle
                 found_item_top = found_item_rectangle.top
                 found_item_bottom = found_item_rectangle.bottom
-
-                rectangle = item.rectangle
 
                 if found_item_top < list_box_top:
                     pyautogui.click(x, y)
@@ -148,9 +143,9 @@ def select_item_in_list_box(list_box: WindowSpecification, find_item: str,
         last_item = items[-1]
 
         pyautogui.click(x, y)
-        pyautogui.scroll(-50)
-        pyautogui.scroll(-50)
-        pyautogui.scroll(-50)
+        pyautogui.scroll(-60)
+        pyautogui.scroll(-60)
+        pyautogui.scroll(-60)
         pyautogui.click(x, y)
 
 
@@ -164,7 +159,7 @@ def get_items_info_string(list_box: ListViewWrapper) -> str:
 
     items = [item.name for item in items]
 
-    items = list(map(lambda x: x.replace('_____widget', ''), items)) #TODO наверное можно убрать
+    items = list(map(lambda x: x.replace('_____widget', ''), items))  # TODO наверное можно убрать
 
     return items
 
