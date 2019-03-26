@@ -103,7 +103,7 @@ class Application:
     @staticmethod
     def get_name_queue():
         ip = requests.get('http://ident.me').text
-        requests.post(f'http://127.0.0.1:8000/workers/', data={'ip': ip})
+        requests.post(f'http://212.109.195.39:8000/workers/', data={'ip': ip})
         return ip
 
     def start(self):

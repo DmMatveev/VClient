@@ -31,5 +31,7 @@ class ProxyAddParameters(NamedTuple):
     password: str = ''
 
 
-class ProxyDeleteParameters(NamedTuple):
-    ip: str
+class ProxyAddStatus(Enum):
+    ERROR_NOT_ADD = 'Ошибка. Прокси не добавлен',
+    ERROR = 'Неизвестная ошибка'
+    ADD = 'Прокси успешно добавлен'
