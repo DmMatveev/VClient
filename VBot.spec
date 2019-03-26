@@ -5,9 +5,7 @@ block_cipher = None
 
 a = Analysis(['vclient\\main.py'],
              pathex=[
-             'C:\\Users\\Dmitry\\Desktop\\VClient',
              'C:\\Users\\Dmitry\\Desktop\\VClient\\vclient',
-             'C:\\Users\\Dmitry\\Desktop\\VClient\\venv\\Lib\site-packages'
              ],
              binaries=[],
              datas=[],

@@ -1,10 +1,16 @@
 try:
     import pywinauto
     import os
+    import locale
 except Exception as e:
     print(type(e))
     print(e)
     input()
+
+def getpreferredencoding(do_setlocale = True):
+    return "utf-8"
+
+locale.getpreferredencoding = getpreferredencoding
 
 def init():
     try:

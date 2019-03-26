@@ -20,7 +20,14 @@ class Command:
 
     def __init__(self):
         try:
-            result = self.execute()
+            try:
+                self.pane.child_window(title="backgroundModalWidget", control_type="Custom").wait_not('exists',                                                                         timeout=3)
+            except RuntimeError:
+                result = self.execute()
+
+            else:
+                self.pane.child_window(control_type='Button', ctrl_index=-1).click()
+                result = self.execute()
 
         except pywinauto.findwindows.ElementNotFoundError as e:
             result = CommandStatus.ERROR
