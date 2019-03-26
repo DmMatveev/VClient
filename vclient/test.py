@@ -15,3 +15,10 @@ pane = app.Pane
 
 pane.print_control_identifiers(depth=1000)
 
+
+
+import commands
+
+commands.application.Start()
+a = commands.application.Status()
+

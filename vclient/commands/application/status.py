@@ -68,4 +68,11 @@ class Status(commands.Command):
 
     @commands.utils.wait_before(1)
     def is_work(self):
-        return False
+        try:
+            self.pane.child_window(title="Идет заработок...", control_type="Text").wrapper_object()
+        except pywinauto.findwindows.ElementNotFoundError:
+            return False
+        except pywinauto.findwindows.ElementAmbiguousError:
+            return False
+
+        return True
