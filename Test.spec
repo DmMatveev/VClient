@@ -3,9 +3,8 @@
 block_cipher = None
 
 
-a = Analysis(['vclient\\main.py'],
+a = Analysis(['test.py'],
              pathex=[
-             'C:\\Users\\Dmitry\\Desktop\\VClient',
              'C:\\Users\\Dmitry\\Desktop\\VClient\\vclient',
              'C:\\Users\\Dmitry\\Desktop\\VClient\\venv\\Lib\site-packages'
              ],
@@ -27,10 +26,10 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,
           [],
-          name='VBot',
+          name='Test',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
           runtime_tmpdir=None,
-          console=True , icon='icon.ico')
+          console=True)

@@ -1,16 +1,17 @@
 import logging.config
+import logging
 
 import settings
 from application import Application
 
-log = logging.getLogger(__name__)
-
 logging.config.dictConfig(settings.log_config)
+
+log = logging.getLogger(__name__)
 
 
 def init():
     application = Application()
-    application.connect()
+    application.start()
 
 
 if __name__ == '__main__':

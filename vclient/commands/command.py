@@ -5,6 +5,10 @@ import pywinauto
 from common.common import ResultMessage, CommandStatus
 from pywinauto import WindowSpecification
 
+import logging
+
+log = logging.getLogger(__name__)
+
 
 class Command:
     RPC = True
@@ -18,26 +22,58 @@ class Command:
         try:
             result = self.execute()
 
-        except pywinauto.findwindows.ElementNotFoundError:
+        except pywinauto.findwindows.ElementNotFoundError as e:
             result = CommandStatus.ERROR
-            self.error_handler()
+            log.exception(e)
+            try:
+                self.error_handler()
+            except Exception as e:
+                log.exception(e)
 
-        except pywinauto.findwindows.ElementAmbiguousError:
+        except pywinauto.findwindows.ElementAmbiguousError as e:
             result = CommandStatus.ERROR
-            self.error_handler()
+            log.exception(e)
+            try:
+                self.error_handler()
+            except Exception as e:
+                log.exception(e)
 
-        except pywinauto.findbestmatch.MatchError:
+        except pywinauto.findbestmatch.MatchError as e:
             result = CommandStatus.ERROR
-            self.error_handler()
+            log.exception(e)
+            try:
+                self.error_handler()
+            except Exception as e:
+                log.exception(e)
 
-        except RuntimeError:
+        except RuntimeError as e:
             result = CommandStatus.ERROR
-            self.error_handler()
+            log.exception(e)
+            try:
+                self.error_handler()
+            except Exception as e:
+                log.exception(e)
+
+        except Exception as e:
+            result = CommandStatus.ERROR
+            log.exception(e)
+            try:
+                self.error_handler()
+            except Exception as e:
+                log.exception(e)
 
         else:
-            if self.is_error():
+            try:
+                if self.is_error():
+                    result = CommandStatus.ERROR
+                    try:
+                        self.error_handler()
+                    except Exception as e:
+                        log.exception(e)
+
+            except Exception as e:
+                log.exception(e)
                 result = CommandStatus.ERROR
-                self.error_handler()
 
         try:
             self._status, self._data = result

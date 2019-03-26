@@ -68,7 +68,7 @@ class Application:
 
         result: ResultMessage = self.call_command(message.command, message.parameters)
 
-        log.debug('Result command: %s', result)
+        log.debug('Status command: %s', result.status)
 
         channel.basic_publish('', self.RESULT_QUEUE, self.serialize(result), properties=properties)
 

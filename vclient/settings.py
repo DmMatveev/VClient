@@ -4,7 +4,7 @@ log_config = {
 
     'formatters': {
         'standard': {
-            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+            'format': '[%(filename)s - %(lineno)d] %(asctime)s [%(levelname)s] %(name)s: %(message)s'
         },
     },
 
@@ -13,20 +13,28 @@ log_config = {
             'level': 'DEBUG',
             'formatter': 'standard',
             'class': 'logging.StreamHandler',
+        },
+
+        'FileHandler': {
+            'level': 'DEBUG',
+            'formatter': 'standard',
+            'filename': './logs.log',
+            'class': 'logging.FileHandler',
         }
     },
     'loggers': {
         '': {
-            'handlers': ['default'],
+            'handlers': ['default', 'FileHandler'],
             'level': 'DEBUG',
         },
 
         'pika': {
-            'level': 'ERROR',
+            'level': 'CRITICAL',
         },
 
+
         'urllib3.connectionpool': {
-            'level': 'ERROR'
+            'level': 'CRITICAL'
         }
     }
 }
