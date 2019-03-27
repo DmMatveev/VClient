@@ -1,4 +1,5 @@
 import logging
+from time import sleep
 from typing import List, Callable, Tuple, NamedTuple
 
 import pyautogui
@@ -9,11 +10,14 @@ from pywinauto.element_info import ElementInfo
 log = logging.getLogger(__name__)
 
 
+def wait(time_sleep):
+    sleep(time_sleep)
+
+
 def wait_before(time_sleep):
     def decorator(method):
         def wrapper(*args, **kwargs):
-            from time import sleep
-            sleep(time_sleep)
+            wait(time_sleep)
             return method(*args, **kwargs)
 
         return wrapper
@@ -24,9 +28,8 @@ def wait_before(time_sleep):
 def wait_after(time_sleep):
     def decorator(method):
         def wrapper(*args, **kwargs):
-            from time import sleep
             result = method(*args, **kwargs)
-            sleep(time_sleep)
+            wait(time_sleep)
             return result
 
         return wrapper
@@ -83,7 +86,6 @@ def select_item_in_list_box(list_box: WindowSpecification,
                             find_item: str,
                             converting_info_to_string: Callable[[str], NamedTuple],
                             field: str) -> Tuple[int, int, int, int]:
-
     list_box = list_box.wrapper_object()
 
     x, y = get_list_box_coordinate_center(list_box)
@@ -100,7 +102,7 @@ def select_item_in_list_box(list_box: WindowSpecification,
         items = get_items_info(list_box)
 
         if len(items) == 0:
-            raise RuntimeError('items != 0')
+            raise RuntimeError('items == 0')
 
         for item in items:
             if item.name == '':
@@ -137,7 +139,7 @@ def select_item_in_list_box(list_box: WindowSpecification,
                                 rectangle.right,
                                 rectangle.bottom)
 
-        if found_item or items[-1] == last_item:
+        if items[-1] == last_item:
             raise RuntimeError('error')
 
         last_item = items[-1]

@@ -1,11 +1,10 @@
+import logging
 import os
 from typing import NamedTuple
 
 import pywinauto
 from common.common import ResultMessage, CommandStatus
 from pywinauto import WindowSpecification
-
-import logging
 
 log = logging.getLogger(__name__)
 
@@ -19,15 +18,22 @@ class Command:
     APP_DIR = f'{os.path.split(os.getenv("APPDATA"))[0]}\\Local\\VtopeBot'
 
     def __init__(self):
-        try:
+        while True:
             try:
-                self.pane.child_window(title="backgroundModalWidget", control_type="Custom").wait_not('exists',                                                                         timeout=3)
-            except RuntimeError:
-                result = self.execute()
+                self.pane.child_window(title="backgroundModalWidget", control_type="Custom").wrapper_object()
 
-            else:
+            except pywinauto.findwindows.ElementNotFoundError:
+                break
+
+            except AttributeError:
+                break
+
+            except pywinauto.findwindows.ElementAmbiguousError:
+                log.error('Close backgroundModalWidget')
                 self.pane.child_window(control_type='Button', ctrl_index=-1).click()
-                result = self.execute()
+
+        try:
+            result = self.execute()
 
         except pywinauto.findwindows.ElementNotFoundError as e:
             result = CommandStatus.ERROR

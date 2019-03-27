@@ -41,7 +41,7 @@ class Application:
 
         self.channel.basic_consume(self.handler_command, self.queue_name)
 
-        log.debug('RabbitMQ listen')
+        log.debug('RabbitMQ listen \n')
 
         self.channel.start_consuming()
 
@@ -68,7 +68,7 @@ class Application:
 
         result: ResultMessage = self.call_command(message.command, message.parameters)
 
-        log.debug('Status command: %s', result.status)
+        log.debug('Status command: %s \n', result.status.name)
 
         channel.basic_publish('', self.RESULT_QUEUE, self.serialize(result), properties=properties)
 
@@ -111,9 +111,9 @@ class Application:
             try:
                 self.connect()
             except ConnectionClosed:
-                log.debug('RabbitMQ connection broken')
+                log.debug('RabbitMQ connection broken \n')
                 time.sleep(30)
 
             except IncompatibleProtocolError:
-                log.debug('RabbitMQ connection broken')
+                log.debug('RabbitMQ connection broken \n')
                 time.sleep(30)

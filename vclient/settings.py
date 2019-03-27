@@ -4,7 +4,7 @@ log_config = {
 
     'formatters': {
         'standard': {
-            'format': '[%(filename)s - %(lineno)d] %(asctime)s [%(levelname)s] %(name)s: %(message)s'
+            'format': '[%(filename)s-%(lineno)d] %(asctime)s %(message)s'
         },
     },
 
