@@ -24,7 +24,7 @@ def init():
 
         pane = app.Pane
 
-        pane.print_control_identifiers(depth=1000, filename='info.txt')
+        #pane.print_control_identifiers(depth=1000, filename='info.txt')
 
     except Exception as e:
         print(e)

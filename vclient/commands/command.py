@@ -3,6 +3,7 @@ import os
 from typing import NamedTuple
 
 import pywinauto
+from commands import utils
 from common.common import ResultMessage, CommandStatus
 from pywinauto import WindowSpecification
 
@@ -20,17 +21,39 @@ class Command:
     def __init__(self):
         while True:
             try:
-                self.pane.child_window(title="backgroundModalWidget", control_type="Custom").wrapper_object()
-
-            except pywinauto.findwindows.ElementNotFoundError:
-                break
-
+                self.pane.child_window(title="backgroundModalWidget", control_type="Custom").wait_not('exists',
+                                                                                                      timeout=1)
             except AttributeError:
                 break
 
-            except pywinauto.findwindows.ElementAmbiguousError:
+            except RuntimeError:
                 log.error('Close backgroundModalWidget')
-                self.pane.child_window(control_type='Button', ctrl_index=-1).click()
+                utils.wait(3)
+
+                try:
+                    self.pane.child_window(control_type='Button', ctrl_index=-1).click()
+
+                except pywinauto.findwindows.ElementNotFoundError as e:
+                    log.exception(e)
+
+                except pywinauto.findwindows.ElementAmbiguousError as e:
+                    log.exception(e)
+
+            break
+
+        try:
+            self.pane.child_window(title="скрыть совет", control_type="Button").click()
+
+        except AttributeError:
+            pass
+
+        except pywinauto.findwindows.ElementNotFoundError as e:
+            pass
+
+        except pywinauto.findwindows.ElementAmbiguousError as e:
+            pass
+
+
 
         try:
             result = self.execute()

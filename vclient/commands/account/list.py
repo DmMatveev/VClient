@@ -47,7 +47,7 @@ class List(commands.Command):
             if status.name in account_info_string:
                 return status
 
-        raise AttributeError('Статус аккаунта не найден')
+        raise AttributeError(f'Status account not found({account_info_string})')
 
     @staticmethod
     def clean_status(account_info_string: str, status: AccountStatus):
@@ -63,3 +63,5 @@ class List(commands.Command):
         for type_ in AccountTypeNumber:
             if type_.value == account_type_number:
                 return AccountType[type_.name]
+
+        raise AttributeError(f'Type account not found({account_info_string})')

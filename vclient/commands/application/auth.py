@@ -29,6 +29,6 @@ class Auth(commands.Command):
         self.pane[self.INPUT_LOGIN].set_text(self.parameters.login)
         self.pane[self.INPUT_PASSWORD].set_text(self.parameters.password)
 
-    @utils.wait_after(5)
+    @utils.wait_after(30)
     def confirm(self):
         self.pane[self.BUTTON_AUTH].click()

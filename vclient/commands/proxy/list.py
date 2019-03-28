@@ -43,7 +43,7 @@ class List(commands.Command):
             if status.name in proxy_info_string:
                 return status
 
-        raise AttributeError(f'Статус прокси не найден {proxy_info_string}')
+        raise AttributeError(f'Status proxy not found({proxy_info_string})')
 
     @staticmethod
     def clean_status(proxy_info_string: str, status: ProxyStatus):
@@ -55,4 +55,4 @@ class List(commands.Command):
             if type_.name.lower() in proxy_info_string:
                 return type_
 
-        raise AttributeError(f'Тип прокси не найден {proxy_info_string}')
+        raise AttributeError(f'Type proxy not found({proxy_info_string})')

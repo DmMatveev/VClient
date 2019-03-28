@@ -171,6 +171,7 @@ def get_list_box_coordinate_center(list_box: ListViewWrapper):
 
     x = list_box_coordinate.left + (list_box_coordinate.right - list_box_coordinate.left) / 2
     y = list_box_coordinate.top + (list_box_coordinate.bottom - list_box_coordinate.top) / 2
+
     return x, y
 
 
