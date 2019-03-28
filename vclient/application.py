@@ -75,6 +75,7 @@ class Application:
 
         except Exception as e:
             log.exception(e)
+            return ResultMessage(CommandStatus.ERROR)
 
     @staticmethod
     def call_command(command: str, parameters: NamedTuple = None) -> ResultMessage:
