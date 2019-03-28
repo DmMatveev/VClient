@@ -46,31 +46,35 @@ class Application:
         self.channel.start_consuming()
 
     def handler_command(self, channel: Channel, method, properties: BasicProperties, body):
-        channel.basic_ack(method.delivery_tag)
+        try:
+            channel.basic_ack(method.delivery_tag)
 
-        properties = BasicProperties(
-            correlation_id=properties.correlation_id,
-            type='result',
-            app_id=self.queue_name
-        )
+            properties = BasicProperties(
+                correlation_id=properties.correlation_id,
+                type='result',
+                app_id=self.queue_name
+            )
 
-        message: CommandMessage = self.deserialize(body)
+            message: CommandMessage = self.deserialize(body)
 
-        if not isinstance(message, CommandMessage):
-            log.error('Invalid CommandMessage: %s', message)
-            channel.basic_publish('',
-                                  self.RESULT_QUEUE,
-                                  self.serialize(ResultMessage(CommandStatus.INVALID)),
-                                  properties=properties)
-            return
+            if not isinstance(message, CommandMessage):
+                log.error('Invalid CommandMessage: %s', message)
+                channel.basic_publish('',
+                                      self.RESULT_QUEUE,
+                                      self.serialize(ResultMessage(CommandStatus.INVALID)),
+                                      properties=properties)
+                return
 
-        log.debug('Command: %s', message.command)
+            log.debug('Command: %s', message.command)
 
-        result: ResultMessage = self.call_command(message.command, message.parameters)
+            result: ResultMessage = self.call_command(message.command, message.parameters)
 
-        log.debug('Status command: %s \n', result.status.name)
+            log.debug('Status command: %s \n', result.status.name)
 
-        channel.basic_publish('', self.RESULT_QUEUE, self.serialize(result), properties=properties)
+            channel.basic_publish('', self.RESULT_QUEUE, self.serialize(result), properties=properties)
+
+        except Exception as e:
+            log.exception(e)
 
     @staticmethod
     def call_command(command: str, parameters: NamedTuple = None) -> ResultMessage:
