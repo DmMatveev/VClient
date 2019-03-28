@@ -39,6 +39,9 @@ class Command:
                 except pywinauto.findwindows.ElementAmbiguousError as e:
                     log.exception(e)
 
+            except Exception as e:
+                log.exception(e)
+
             break
 
         try:
@@ -53,46 +56,17 @@ class Command:
         except pywinauto.findwindows.ElementAmbiguousError as e:
             pass
 
-
+        except Exception as e:
+            log.exception(e)
 
         try:
             result = self.execute()
 
-        except pywinauto.findwindows.ElementNotFoundError as e:
-            result = CommandStatus.ERROR
-            log.exception(e)
-            try:
-                self.error_handler()
-            except Exception as e:
-                log.exception(e)
-
-        except pywinauto.findwindows.ElementAmbiguousError as e:
-            result = CommandStatus.ERROR
-            log.exception(e)
-            try:
-                self.error_handler()
-            except Exception as e:
-                log.exception(e)
-
-        except pywinauto.findbestmatch.MatchError as e:
-            result = CommandStatus.ERROR
-            log.exception(e)
-            try:
-                self.error_handler()
-            except Exception as e:
-                log.exception(e)
-
-        except RuntimeError as e:
-            result = CommandStatus.ERROR
-            log.exception(e)
-            try:
-                self.error_handler()
-            except Exception as e:
-                log.exception(e)
-
         except Exception as e:
             result = CommandStatus.ERROR
+
             log.exception(e)
+
             try:
                 self.error_handler()
             except Exception as e:
@@ -102,6 +76,7 @@ class Command:
             try:
                 if self.is_error():
                     result = CommandStatus.ERROR
+
                     try:
                         self.error_handler()
                     except Exception as e:

@@ -34,3 +34,8 @@ def init():
 
 if __name__ == '__main__':
     init()
+
+
+
+import commands
+commands.application.Status()
