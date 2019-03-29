@@ -39,6 +39,9 @@ class Command:
                 except pywinauto.findwindows.ElementAmbiguousError as e:
                     log.exception(e)
 
+                except Exception as e:
+                    log.exception(e)
+
             except Exception as e:
                 log.exception(e)
 
